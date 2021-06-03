@@ -1,6 +1,7 @@
 package com.example.downloadcoroutines
 
 import android.Manifest
+import android.app.Dialog
 import android.app.DownloadManager
 import android.content.Context
 import android.content.pm.PackageManager
@@ -11,6 +12,7 @@ import android.os.Bundle
 import android.os.Environment
 
 import android.view.View
+import android.view.Window
 
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -19,6 +21,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.*
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 import com.example.downloadcoroutines.adapters.GenericAdapter
 import com.example.downloadcoroutines.viewModel.PicsViewModel
@@ -29,6 +33,7 @@ import com.nexogic.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottomsheet_layout.*
 import kotlinx.android.synthetic.main.bottomsheet_layout.view.*
+import kotlinx.android.synthetic.main.layout_dialog.*
 import kotlinx.coroutines.*
 import java.io.*
 import java.util.*
@@ -44,6 +49,7 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
     lateinit var viewmodel: PicsViewModel
     lateinit var genericAdapter: GenericAdapter
     lateinit var bottomSheetView: View
+    val dialog by lazy { Dialog(this) }
     private lateinit var bottomSheetDialog: BottomSheetDialog
     lateinit var imageList: ArrayList<SpecialistsModel>
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +58,7 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
         layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
         (layoutManager as StaggeredGridLayoutManager).setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS)
         setBottomSheet()
+        setDialog()
         imageList = ArrayList()
 
 
@@ -62,7 +69,6 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
 
             }
         }
-        setClickListeners()
         initPicsAdapter()
         setPicsAdapter()
     }
@@ -80,9 +86,6 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
         }
     }
 
-
-    private fun setClickListeners() {
-    }
 
     private fun initPicsAdapter() {
         if (!::genericAdapter.isInitialized) {
@@ -131,6 +134,7 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun downloadFile(url: String, fileName: String? = null) {
+        dialog.show()
         val directory = File(Environment.DIRECTORY_DOWNLOADS)
 
         if (!directory.exists()) {
@@ -170,15 +174,17 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
                 val fileStatus = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
                 when (fileStatus) {
                     DownloadManager.STATUS_FAILED -> {
+                        dialog.dismiss()
                     }
                     DownloadManager.STATUS_PAUSED -> {
+                        dialog.dismiss()
                     }
                     DownloadManager.STATUS_PENDING -> {
                     }
                     DownloadManager.STATUS_RUNNING -> {
                     }
                     DownloadManager.STATUS_SUCCESSFUL -> {
-
+                        dialog.dismiss()
 
                     }
                 }
@@ -188,6 +194,26 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
 
     }
 
+    fun setDialog() {
+
+        GlobalScope.launch(Dispatchers.Main) {
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setCancelable(false)
+            dialog.setContentView(R.layout.layout_dialog)
+
+            Glide.with(this@MainActivity)
+                .load(R.drawable.progress_animation)
+                .centerInside()
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .thumbnail(
+                    Glide.with(this@MainActivity).load(R.drawable.progress_animation)
+                        .thumbnail(0.1f)
+                )
+                .into(dialog.imgLoading)
+        }
+
+
+    }
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun askPermissions(url: String, imageName: String? = null) {
