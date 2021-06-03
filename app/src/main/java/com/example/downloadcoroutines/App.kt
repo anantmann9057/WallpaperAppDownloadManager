@@ -4,7 +4,11 @@ import android.app.Application
 import android.content.Context
 import com.nexogic.apiservices.ApiInterface
 import com.nexogic.apiservices.NetworkUtility
+import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
 
+@Module
 class App : Application() {
     var appContext: Context? = null
 
@@ -28,6 +32,8 @@ class App : Application() {
 
     }
 
+    @Provides
+    @Singleton
     private fun basicSetupForAPI() {
         val networkBuilder = NetworkUtility.Builder(BASE_URL, appContext!!)
         networkBuilder.withConnectionTimeout(60)

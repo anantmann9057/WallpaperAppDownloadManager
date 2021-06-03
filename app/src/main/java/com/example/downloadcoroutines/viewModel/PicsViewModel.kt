@@ -20,7 +20,7 @@ class PicsViewModel(application: Application) : AndroidViewModel(application) {
 
         viewModelScope.launch(Dispatchers.IO)
         {
-                
+
             call!!.getPics(page, limit).enqueue {
 
                 onResponse = {

@@ -39,6 +39,7 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
     View.OnClickListener {
     var downloadProgress = 0
     lateinit var job: Job
+
     lateinit var layoutManager: RecyclerView.LayoutManager
     lateinit var viewmodel: PicsViewModel
     lateinit var genericAdapter: GenericAdapter
@@ -58,6 +59,7 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
             viewmodel = ViewModelProvider(this).get(PicsViewModel::class.java)
             job = CoroutineScope(Dispatchers.IO).launch {
                 viewmodel.getPics(1, 100)
+
             }
         }
         setClickListeners()
@@ -90,6 +92,7 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
                     this,
                     R.layout.row_home_pics
                 )
+
             rvImages.layoutManager = layoutManager
             rvImages.adapter = genericAdapter
             rvImages.setItemViewCacheSize(500)
@@ -103,6 +106,7 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
             viewmodel.picsResponse.observe(this, Observer
             {
                 if (it == null) {
+
                     CoroutineScope(Dispatchers.IO).launch {
                         delay(3000)
                         repeat(3) {
