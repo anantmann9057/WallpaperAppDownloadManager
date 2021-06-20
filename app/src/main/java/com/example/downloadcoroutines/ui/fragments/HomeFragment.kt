@@ -27,6 +27,7 @@ import com.example.downloadcoroutines.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STOR
 import com.example.downloadcoroutines.R
 import com.example.downloadcoroutines.adapters.GenericAdapter
 import com.example.downloadcoroutines.modelClasses.SpecialistsModel
+import com.example.downloadcoroutines.showToast
 import com.example.downloadcoroutines.viewModel.PicsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nexogic.adapters.DataBindingAdapter
@@ -59,7 +60,6 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        animeHome.setAnimationFromUrl("https://assets6.lottiefiles.com/packages/lf20_MqQTT7.json")
 
         layoutManager = StaggeredGridLayoutManager(3, LinearLayoutManager.VERTICAL)
         (layoutManager as StaggeredGridLayoutManager).setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS)
@@ -71,7 +71,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
             viewmodel = ViewModelProvider(this).get(PicsViewModel::class.java)
 
             job = CoroutineScope(Dispatchers.IO).launch {
-                viewmodel.getPics(1, 100)
+                viewmodel.getPics(1, 50)
             }
         }
         initPicsAdapter()
@@ -108,6 +108,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
                     R.layout.row_home_pics
                 )
             rvImages.let {
+                it.isNestedScrollingEnabled = false
                 it.layoutManager = layoutManager
                 it.adapter = genericAdapter
                 it.setItemViewCacheSize(500)
@@ -118,6 +119,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
     }
 
     fun setPicsAdapter() {
+        job.start()
         if (!viewmodel.picsResponse.hasActiveObservers()) {
             viewmodel.picsResponse.observe(requireActivity(), Observer
             {
@@ -127,23 +129,29 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
                         repeat(3) {
                             job.start()
                         }
-                        rvImages.visibility = View.VISIBLE
-                        animeHome.visibility = View.GONE
 
                     }
                 } else {
+                    rvCat.apply {
+                        isNestedScrollingEnabled = false
+                        layoutManager = LinearLayoutManager(
+                            requireContext(),
+                            LinearLayoutManager.HORIZONTAL,
+                            false
+                        )
+                        adapter = GenericAdapter(
+                            it as ArrayList<Any>,
+                            this@HomeFragment,
+                            R.layout.row_categories
+                        )
+                        setItemViewCacheSize(500)
+                    }
                     if (imageList.isEmpty()) {
                         imageList = it
                         genericAdapter.notifyAdapter(it as ArrayList<Any>)
-                        animeHome.visibility = View.GONE
-                        rvImages.visibility = View.VISIBLE
-
                     }
                 }
             })
-            job.start()
-            rvImages.visibility = View.VISIBLE
-            animeHome.visibility = View.GONE
 
 
         }
@@ -265,6 +273,12 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
     override fun onItemClick(view: View?, position: Int, `object`: Any) {
         if (`object` is SpecialistsModel) {
             when (view?.id) {
+                R.id.ivCategory -> {
+                    var list = imageList.filter {
+                        it.equals(`object`.author)
+                    }
+                    requireActivity().showToast(list)
+                }
                 R.id.cardIImage -> {
 
                     DataBindingAdapter.let {

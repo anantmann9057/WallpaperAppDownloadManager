@@ -19,7 +19,6 @@ class DataBindingAdapter {
         @JvmStatic
         @BindingAdapter("app:src")
         fun setSrc(imageView: ImageView?, imageURL: String?) {
-            imageView?.scaleType = ImageView.ScaleType.FIT_XY
             if (imageURL != null) {
 
                 Glide.with(imageView!!.context)
@@ -42,7 +41,6 @@ class DataBindingAdapter {
         @JvmStatic
         @BindingAdapter("app:blurred")
         fun setBlurred(imageView: ImageView?, imageURL: String?) {
-            imageView?.scaleType = ImageView.ScaleType.FIT_XY
             if (imageURL != null) {
                 Glide.with(imageView!!.context)
                     .load(imageURL)
@@ -50,10 +48,6 @@ class DataBindingAdapter {
                     .apply(RequestOptions().override(1440,800))
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .apply(RequestOptions.bitmapTransform(BlurTransformation(25, 3)))
-                    .thumbnail(
-                        Glide.with(imageView.context).load(R.drawable.progress_animation)
-                            .thumbnail(0.1f)
-                    )
                     .into(imageView)
 
             }

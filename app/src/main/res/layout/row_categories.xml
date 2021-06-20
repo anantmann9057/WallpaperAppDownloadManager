@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <data>
+
+        <variable
+            name="model"
+            type="com.example.downloadcoroutines.modelClasses.SpecialistsModel" />
+
+        <variable
+            name="itemClickListener"
+            type="com.example.downloadcoroutines.adapters.GenericAdapter.OnItemClickListener" />
+
+        <variable
+            name="index"
+            type="Integer" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_5sdp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivCategory"
+            android:layout_width="@dimen/_90sdp"
+            android:layout_height="@dimen/_90sdp"
+            app:blurred="@{model.download_url}"
+            android:onClick="@{(view)-> itemClickListener.onItemClick(view,index,model)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/comic"
+            android:text="@{model.author}"
+            android:layout_marginHorizontal="@dimen/_2sdp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="@id/ivCategory"
+            app:layout_constraintLeft_toLeftOf="@id/ivCategory"
+            app:layout_constraintRight_toRightOf="@id/ivCategory"
+            app:layout_constraintTop_toTopOf="@id/ivCategory" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
