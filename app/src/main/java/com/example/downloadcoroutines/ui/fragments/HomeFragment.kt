@@ -22,7 +22,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.downloadcoroutines.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
 import com.example.downloadcoroutines.R
 import com.example.downloadcoroutines.adapters.GenericAdapter
@@ -40,7 +39,9 @@ import java.io.File
 class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
     lateinit var job: Job
 
-    lateinit var layoutManager: RecyclerView.LayoutManager
+    var page = 1
+
+    lateinit var layoutManager: LinearLayoutManager
 
     lateinit var viewmodel: PicsViewModel
 
@@ -61,8 +62,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
         super.onActivityCreated(savedInstanceState)
 
 
-        layoutManager = StaggeredGridLayoutManager(3, LinearLayoutManager.VERTICAL)
-        (layoutManager as StaggeredGridLayoutManager).setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS)
+        layoutManager = LinearLayoutManager(requireContext())
 
         setBottomSheet()
 
@@ -71,7 +71,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
             viewmodel = ViewModelProvider(this).get(PicsViewModel::class.java)
 
             job = CoroutineScope(Dispatchers.IO).launch {
-                viewmodel.getPics(1, 50)
+                viewmodel.getPics(page, 50)
             }
         }
         initPicsAdapter()
@@ -112,6 +112,17 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
                 it.layoutManager = layoutManager
                 it.adapter = genericAdapter
                 it.setItemViewCacheSize(500)
+                it.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        if (layoutManager.findLastCompletelyVisibleItemPosition() == imageList.size - 1) {
+                            page++
+                            viewmodel.getPics(page, 10)
+                            genericAdapter.notifyAdapter(imageList as ArrayList<Any>)
+
+                        }
+
+                    }
+                })
             }
 
 
