@@ -22,31 +22,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_5sdp"
-        app:cardBackgroundColor="#123456"
         android:onClick="@{(view)-> itemClickListener.onItemClick(view,index,model)}"
         android:padding="@dimen/_10sdp"
-        app:cardCornerRadius="@dimen/_10sdp">
+        app:cardCornerRadius="@dimen/_5sdp">
 
-        <LinearLayout
+        <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{model.author}"
-                android:textColor="@color/white"
-                android:paddingHorizontal="@dimen/_10sdp"
-                android:textSize="@dimen/_14sdp" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="centerInside"
-                app:src="@{model.download_url}" />
-
-        </LinearLayout>
-
+            android:scaleType="centerInside"
+            app:src="@{model.download_url}" />
     </androidx.cardview.widget.CardView>
 </layout>

@@ -25,9 +25,11 @@ class DataBindingAdapter {
                 Glide.with(imageView!!.context)
                     .load(imageURL)
                     .centerInside()
+                    .apply(RequestOptions().override(1280,800))
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .thumbnail(
-                        Glide.with(imageView.context).load(R.drawable.progress_animation)
+                        Glide.with(imageView.context)
+                            .load(R.drawable.progress_animation)
                             .thumbnail(0.1f)
                     )
                     .into(imageView)
@@ -45,6 +47,7 @@ class DataBindingAdapter {
                 Glide.with(imageView!!.context)
                     .load(imageURL)
                     .fitCenter()
+                    .apply(RequestOptions().override(1440,800))
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .apply(RequestOptions.bitmapTransform(BlurTransformation(25, 3)))
                     .thumbnail(

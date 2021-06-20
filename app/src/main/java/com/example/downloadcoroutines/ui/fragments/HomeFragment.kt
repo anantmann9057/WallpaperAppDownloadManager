@@ -1,4 +1,4 @@
-package com.example.downloadcoroutines
+package com.example.downloadcoroutines.ui.fragments
 
 import android.Manifest
 import android.app.Dialog
@@ -10,59 +10,66 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-
+import android.view.LayoutInflater
 import android.view.View
-import android.view.Window
-
+import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.*
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.downloadcoroutines.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+import com.example.downloadcoroutines.R
 import com.example.downloadcoroutines.adapters.GenericAdapter
+import com.example.downloadcoroutines.modelClasses.SpecialistsModel
 import com.example.downloadcoroutines.viewModel.PicsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nexogic.adapters.DataBindingAdapter
-import com.example.downloadcoroutines.modelClasses.SpecialistsModel
-import com.nexogic.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottomsheet_layout.*
-import kotlinx.android.synthetic.main.bottomsheet_layout.view.*
-import kotlinx.android.synthetic.main.layout_dialog.*
+import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.*
-import java.io.*
-import java.util.*
-import kotlin.collections.ArrayList
+import java.io.File
 
 
-class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
-    View.OnClickListener {
-    var downloadProgress = 0
+class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
     lateinit var job: Job
+
     lateinit var layoutManager: RecyclerView.LayoutManager
+
     lateinit var viewmodel: PicsViewModel
+
     lateinit var genericAdapter: GenericAdapter
-    lateinit var bottomSheetView: View
-    val dialog by lazy { Dialog(this) }
-    private lateinit var bottomSheetDialog: BottomSheetDialog
     lateinit var imageList: ArrayList<SpecialistsModel>
+
+    val dialog by lazy { Dialog(requireContext()) }
+
+    lateinit var bottomSheetView: View
+    private lateinit var bottomSheetDialog: BottomSheetDialog
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        animeHome.setAnimationFromUrl("https://assets6.lottiefiles.com/packages/lf20_MqQTT7.json")
+
+        layoutManager = StaggeredGridLayoutManager(3, LinearLayoutManager.VERTICAL)
         (layoutManager as StaggeredGridLayoutManager).setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS)
+
         setBottomSheet()
-        setDialog()
+
         imageList = ArrayList()
-
-
         if (!::viewmodel.isInitialized) {
             viewmodel = ViewModelProvider(this).get(PicsViewModel::class.java)
+
             job = CoroutineScope(Dispatchers.IO).launch {
                 viewmodel.getPics(1, 100)
             }
@@ -71,13 +78,20 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
         setPicsAdapter()
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_home, container, false)
+    }
 
     private fun setBottomSheet() {
         GlobalScope.launch(Dispatchers.Main) {
             bottomSheetView =
                 layoutInflater.inflate(R.layout.bottomsheet_layout, null)
 
-            bottomSheetDialog = BottomSheetDialog(this@MainActivity)
+            bottomSheetDialog = BottomSheetDialog(requireContext())
             bottomSheetDialog.setContentView(bottomSheetView)
 
 
@@ -93,9 +107,11 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
                     this,
                     R.layout.row_home_pics
                 )
-            rvImages.layoutManager = layoutManager
-            rvImages.adapter = genericAdapter
-            rvImages.setItemViewCacheSize(500)
+            rvImages.let {
+                it.layoutManager = layoutManager
+                it.adapter = genericAdapter
+                it.setItemViewCacheSize(500)
+            }
 
 
         }
@@ -103,7 +119,7 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
 
     fun setPicsAdapter() {
         if (!viewmodel.picsResponse.hasActiveObservers()) {
-            viewmodel.picsResponse.observe(this, Observer
+            viewmodel.picsResponse.observe(requireActivity(), Observer
             {
                 if (it == null) {
                     CoroutineScope(Dispatchers.IO).launch {
@@ -111,17 +127,23 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
                         repeat(3) {
                             job.start()
                         }
+                        rvImages.visibility = View.VISIBLE
+                        animeHome.visibility = View.GONE
 
                     }
                 } else {
                     if (imageList.isEmpty()) {
                         imageList = it
                         genericAdapter.notifyAdapter(it as ArrayList<Any>)
+                        animeHome.visibility = View.GONE
+                        rvImages.visibility = View.VISIBLE
 
                     }
                 }
             })
             job.start()
+            rvImages.visibility = View.VISIBLE
+            animeHome.visibility = View.GONE
 
 
         }
@@ -136,7 +158,8 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
         if (!directory.exists()) {
             directory.mkdirs()
         }
-        val downloadManager = this.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadManager =
+            requireActivity().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
         val downloadUri = Uri.parse(url)
 
@@ -190,61 +213,40 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
 
     }
 
-    fun setDialog() {
-
-        GlobalScope.launch(Dispatchers.Main) {
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setCancelable(false)
-            dialog.setContentView(R.layout.layout_dialog)
-
-            Glide.with(this@MainActivity)
-                .load(R.drawable.progress_animation)
-                .centerInside()
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                .thumbnail(
-                    Glide.with(this@MainActivity).load(R.drawable.progress_animation)
-                        .thumbnail(0.1f)
-                )
-                .into(dialog.imgLoading)
-        }
-
-
-    }
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun askPermissions(url: String, imageName: String? = null) {
         if (ContextCompat.checkSelfPermission(
-                this,
+                requireContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             // Permission is not granted
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
+                    requireActivity(),
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 )
             ) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                AlertDialog.Builder(this)
+                AlertDialog.Builder(requireContext())
                     .setTitle("Permission required")
                     .setMessage("Permission required to save files.")
                     .setPositiveButton("Accept") { dialog, id ->
                         ActivityCompat.requestPermissions(
-                            this,
+                            requireActivity(),
                             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                             MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
                         )
-                        finish()
                     }
                     .setNegativeButton("Deny") { dialog, id -> dialog.cancel() }
                     .show()
             } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(
-                    this,
+                    requireActivity(),
                     arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
                 )
@@ -268,27 +270,22 @@ class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
                     DataBindingAdapter.let {
                         it.setSrc(bottomSheetDialog.ivImage, `object`.download_url)
                     }
-                    bottomSheetDialog.show()
-                    bottomSheetDialog.btDownload.setOnClickListener {
 
-                        askPermissions(
-                            `object`.download_url.toString(),
-                            `object`.author
-                        )
+                    bottomSheetDialog.apply {
 
+                        btDownload.setOnClickListener {
+                            askPermissions(
+                                `object`.download_url.toString(),
+                                `object`.author
+                            )
+                        }
+                        tvAuthorName.text = `object`.author
+                        show()
                     }
                 }
             }
 
 
-        }
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-
-            R.id.floating -> {
-            }
         }
     }
 
