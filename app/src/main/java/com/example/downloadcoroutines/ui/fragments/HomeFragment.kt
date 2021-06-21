@@ -28,7 +28,6 @@ import com.example.downloadcoroutines.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STOR
 import com.example.downloadcoroutines.R
 import com.example.downloadcoroutines.adapters.GenericAdapter
 import com.example.downloadcoroutines.modelClasses.SpecialistsModel
-import com.example.downloadcoroutines.showToast
 import com.example.downloadcoroutines.viewModel.PicsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nexogic.adapters.DataBindingAdapter
@@ -75,7 +74,6 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
         }
         initPicsAdapter()
         setPicsAdapter(page)
-
         nestedHome.setOnScrollChangeListener(nestedScrollListener)
     }
 
@@ -158,6 +156,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
                     }
                 } else {
                     rvCat.apply {
+                        it.shuffle()
                         isNestedScrollingEnabled = false
                         layoutManager = LinearLayoutManager(
                             requireContext(),
@@ -165,7 +164,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
                             false
                         )
                         adapter = GenericAdapter(
-                            it as ArrayList<Any>,
+                             it as ArrayList<Any>,
                             this@HomeFragment,
                             R.layout.row_categories
                         )
@@ -312,9 +311,12 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
             when (view?.id) {
                 R.id.ivCategory -> {
                     var list = imageList.filter {
-                        it.equals(`object`.author)
+                        it.author.equals(`object`.author)
                     }
-                    requireActivity().showToast(list)
+                    genericAdapter =
+                        GenericAdapter(list as ArrayList<Any>, this, R.layout.row_home_pics)
+                    rvImages.adapter = genericAdapter
+                    genericAdapter.notifyItemInserted(list.size)
                 }
                 R.id.cardIImage -> {
 
@@ -331,6 +333,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
                             )
                         }
                         tvAuthorName.text = `object`.author
+
                         show()
                     }
                 }
