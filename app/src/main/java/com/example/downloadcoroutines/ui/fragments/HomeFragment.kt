@@ -164,7 +164,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
                             false
                         )
                         adapter = GenericAdapter(
-                             it as ArrayList<Any>,
+                            it as ArrayList<Any>,
                             this@HomeFragment,
                             R.layout.row_categories
                         )
@@ -316,7 +316,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
                     genericAdapter =
                         GenericAdapter(list as ArrayList<Any>, this, R.layout.row_home_pics)
                     rvImages.adapter = genericAdapter
-                    genericAdapter.notifyItemInserted(list.size)
+                    genericAdapter.notifyAdapter(list as ArrayList<Any>)
                 }
                 R.id.cardIImage -> {
 
