@@ -81,6 +81,8 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
         initPicsAdapter()
         setPicsAdapter(page)
         nestedHome.setOnScrollChangeListener(nestedScrollListener)
+
+        animeHeaderHome.setAnimationFromUrl("https://assets7.lottiefiles.com/packages/lf20_ynwbrgau.json")
     }
 
     var nestedScrollListener = object : NestedScrollView.OnScrollChangeListener {
