@@ -1,13 +1,19 @@
 package com.nexogic.adapters
 
 
+import android.graphics.Bitmap
+import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.view.View
-import androidx.databinding.BindingAdapter
 import android.widget.ImageView
+import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.downloadcoroutines.R
+import com.example.downloadcoroutines.getDominantColor
 import jp.wasabeef.glide.transformations.BlurTransformation
 
 
@@ -20,11 +26,10 @@ class DataBindingAdapter {
         @BindingAdapter("app:src")
         fun setSrc(imageView: ImageView?, imageURL: String?) {
             if (imageURL != null) {
-
                 Glide.with(imageView!!.context)
                     .load(imageURL)
                     .centerInside()
-                    .apply(RequestOptions().override(1280,800))
+                    .apply(RequestOptions().override(600, 800))
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .thumbnail(
                         Glide.with(imageView.context)
@@ -39,13 +44,43 @@ class DataBindingAdapter {
         }
 
         @JvmStatic
+        @BindingAdapter("filter")
+        fun setFilter(imageView: ImageView, imageURL: String?) {
+            Glide.with(imageView.context)
+                .asBitmap()
+                .load(imageURL)
+                .centerInside()
+                .apply(RequestOptions().override(800, 1080))
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .into(object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap>?
+                    ) {
+                        imageView.setImageBitmap(resource)
+                        imageView.setColorFilter(
+                            getDominantColor(resource),
+                            PorterDuff.Mode.DARKEN
+                        )
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        // this is called when imageView is cleared on lifecycle call or for
+                        // some other reason.
+                        // if you are referencing the bitmap somewhere else too other than this imageView
+                        // clear it here as you can no longer have the bitmap
+                    }
+                })
+        }
+
+        @JvmStatic
         @BindingAdapter("app:blurred")
         fun setBlurred(imageView: ImageView?, imageURL: String?) {
             if (imageURL != null) {
                 Glide.with(imageView!!.context)
                     .load(imageURL)
                     .fitCenter()
-                    .apply(RequestOptions().override(1440,800))
+                    .apply(RequestOptions().override(1440, 800))
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .apply(RequestOptions.bitmapTransform(BlurTransformation(25, 3)))
                     .into(imageView)

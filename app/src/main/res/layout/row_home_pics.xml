@@ -17,19 +17,46 @@
             type="Integer" />
     </data>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardIImage"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_margin="@dimen/_5sdp"
-        android:onClick="@{(view)-> itemClickListener.onItemClick(view,index,model)}"
-        android:padding="@dimen/_10sdp"
-        app:cardCornerRadius="@dimen/_5sdp">
+        android:layout_height="wrap_content"
+        >
 
-        <ImageView
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@{model.author}"
+            android:textAlignment="center"
+            android:hint="asdasdaasd"
+            android:elevation="@dimen/_5sdp"
+            app:layout_constraintTop_toTopOf="@id/cardIImage"
+            app:layout_constraintLeft_toLeftOf="@id/cardIImage"
+            app:layout_constraintRight_toRightOf="@id/cardIImage"
+            app:layout_constraintBottom_toBottomOf="@id/cardIImage"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14sdp" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardIImage"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_100sdp"
-            android:scaleType="fitXY"
-            app:src="@{model.download_url}" />
-    </androidx.cardview.widget.CardView>
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/_5sdp"
+            android:onClick="@{(view)-> itemClickListener.onItemClick(view,index,model)}"
+            app:cardCornerRadius="@dimen/_5sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <ImageView
+                filter="@{model.download_url}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY" />
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

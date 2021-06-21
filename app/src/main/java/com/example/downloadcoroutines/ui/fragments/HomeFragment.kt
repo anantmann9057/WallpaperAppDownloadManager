@@ -17,11 +17,13 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.downloadcoroutines.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
 import com.example.downloadcoroutines.R
 import com.example.downloadcoroutines.adapters.GenericAdapter
@@ -41,7 +43,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
 
     var page = 1
 
-    lateinit var layoutManager: LinearLayoutManager
+    lateinit var layoutManager: RecyclerView.LayoutManager
 
     lateinit var viewmodel: PicsViewModel
 
@@ -62,7 +64,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
         super.onActivityCreated(savedInstanceState)
 
 
-        layoutManager = LinearLayoutManager(requireContext())
+        layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
 
         setBottomSheet()
 
@@ -70,12 +72,27 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
         if (!::viewmodel.isInitialized) {
             viewmodel = ViewModelProvider(this).get(PicsViewModel::class.java)
 
-            job = CoroutineScope(Dispatchers.IO).launch {
-                viewmodel.getPics(page, 50)
-            }
         }
         initPicsAdapter()
-        setPicsAdapter()
+        setPicsAdapter(page)
+
+        nestedHome.setOnScrollChangeListener(nestedScrollListener)
+    }
+
+    var nestedScrollListener = object : NestedScrollView.OnScrollChangeListener {
+        override fun onScrollChange(
+            v: NestedScrollView?,
+            scrollX: Int,
+            scrollY: Int,
+            oldScrollX: Int,
+            oldScrollY: Int
+        ) {
+            if (scrollY == v!!.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
+                page++
+                setPicsAdapter(page)
+            }
+        }
+
     }
 
     override fun onCreateView(
@@ -111,26 +128,23 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
                 it.isNestedScrollingEnabled = false
                 it.layoutManager = layoutManager
                 it.adapter = genericAdapter
-                it.setItemViewCacheSize(500)
-                it.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        if (layoutManager.findLastCompletelyVisibleItemPosition() == imageList.size - 1) {
-                            page++
-                            viewmodel.getPics(page, 10)
-                            genericAdapter.notifyAdapter(imageList as ArrayList<Any>)
 
-                        }
-
-                    }
-                })
+            }
+            if (imageList.isNotEmpty()) {
+                rvImages.setItemViewCacheSize(imageList.size)
             }
 
 
         }
     }
 
-    fun setPicsAdapter() {
-        job.start()
+    fun setPicsAdapter(page: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            async {
+                viewmodel.getPics(page, 10)
+
+            }.await()
+        }
         if (!viewmodel.picsResponse.hasActiveObservers()) {
             viewmodel.picsResponse.observe(requireActivity(), Observer
             {
@@ -160,6 +174,18 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
                     if (imageList.isEmpty()) {
                         imageList = it
                         genericAdapter.notifyAdapter(it as ArrayList<Any>)
+                    } else {
+                        for (i in it) {
+                            imageList.add(
+                                SpecialistsModel(
+                                    i.author,
+                                    i.download_url,
+                                    i.id,
+                                    i.url
+                                )
+                            )
+                        }
+                        genericAdapter.notifyItemInserted(imageList.size)
                     }
                 }
             })
