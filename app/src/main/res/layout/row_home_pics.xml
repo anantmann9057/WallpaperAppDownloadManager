@@ -19,24 +19,23 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_margin="@dimen/_5sdp"
         android:layout_height="wrap_content"
-        >
+        android:layout_margin="@dimen/_5sdp">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:elevation="@dimen/_5sdp"
+            android:hint="asdasdaasd"
             android:text="@{model.author}"
             android:textAlignment="center"
-            android:hint="asdasdaasd"
-            android:elevation="@dimen/_5sdp"
-            app:layout_constraintTop_toTopOf="@id/cardIImage"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="@id/cardIImage"
             app:layout_constraintLeft_toLeftOf="@id/cardIImage"
             app:layout_constraintRight_toRightOf="@id/cardIImage"
-            app:layout_constraintBottom_toBottomOf="@id/cardIImage"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp" />
+            app:layout_constraintTop_toTopOf="@id/cardIImage" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardIImage"
@@ -44,7 +43,7 @@
             android:layout_height="wrap_content"
             android:elevation="@dimen/_5sdp"
             android:onClick="@{(view)-> itemClickListener.onItemClick(view,index,model)}"
-            app:cardCornerRadius="@dimen/_5sdp"
+            app:cardCornerRadius="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -57,6 +56,7 @@
                 android:layout_height="wrap_content"
                 android:scaleType="fitXY" />
         </androidx.cardview.widget.CardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

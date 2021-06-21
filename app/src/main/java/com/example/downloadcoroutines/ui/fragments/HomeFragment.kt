@@ -1,11 +1,13 @@
 package com.example.downloadcoroutines.ui.fragments
 
 import android.Manifest
+import android.animation.ArgbEvaluator
 import android.app.Dialog
 import android.app.DownloadManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -39,6 +41,10 @@ import java.io.File
 
 class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
     lateinit var job: Job
+    var evaluator = ArgbEvaluator()
+    var colorStart = Color.GREEN;
+    var colorEnd = Color.BLUE;
+
 
     var page = 1
 
@@ -85,6 +91,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
             oldScrollX: Int,
             oldScrollY: Int
         ) {
+
             if (scrollY == v!!.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
                 page++
                 setPicsAdapter(page)
