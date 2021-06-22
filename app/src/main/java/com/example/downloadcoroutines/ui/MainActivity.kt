@@ -1,4 +1,4 @@
-package com.example.downloadcoroutines
+package com.example.downloadcoroutines.ui
 
 import android.Manifest
 import android.app.Dialog
@@ -23,6 +23,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.downloadcoroutines.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+import com.example.downloadcoroutines.R
 
 import com.example.downloadcoroutines.adapters.GenericAdapter
 import com.example.downloadcoroutines.viewModel.PicsViewModel
@@ -42,7 +44,6 @@ import kotlin.collections.ArrayList
 
 class MainActivity : BaseActivity(), GenericAdapter.OnItemClickListener<Any>,
     View.OnClickListener {
-    var downloadProgress = 0
     lateinit var job: Job
     lateinit var layoutManager: RecyclerView.LayoutManager
     lateinit var viewmodel: PicsViewModel

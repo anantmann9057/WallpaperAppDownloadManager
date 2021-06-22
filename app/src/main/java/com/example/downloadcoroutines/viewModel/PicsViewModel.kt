@@ -14,13 +14,16 @@ import kotlinx.coroutines.launch
 class PicsViewModel(application: Application) : AndroidViewModel(application) {
 
     val picsResponse by lazy { MutableLiveData<ArrayList<SpecialistsModel>>() }
+
+    val context by lazy { getApplication() as App }
+
     private val call by lazy { getApplication<App>().apiService }
 
-     fun getPics(page: Int, limit: Int) {
+    fun getPics(page: Int, limit: Int) {
 
         viewModelScope.launch(Dispatchers.IO)
         {
-                
+
             call!!.getPics(page, limit).enqueue {
 
                 onResponse = {
@@ -28,7 +31,7 @@ class PicsViewModel(application: Application) : AndroidViewModel(application) {
                 }
 
                 onFailure = {
-                    getApplication<App>().showToast(it!!.message.toString())
+                    context.showToast(it!!.message.toString())
                 }
             }
         }
