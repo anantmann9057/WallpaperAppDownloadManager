@@ -1,9 +1,7 @@
 package com.example.downloadcoroutines.ui.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.downloadcoroutines.R
@@ -27,6 +25,13 @@ class ProfileFragment : Fragment() {
         binding.animeProfile.setAnimationFromUrl("https://assets7.lottiefiles.com/packages/lf20_dgsA0b.json")
         binding.animeProfilePic.setAnimationFromUrl("https://assets7.lottiefiles.com/datafiles/6deVuMSwjYosId3/data.json")
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val window: Window = requireActivity().getWindow()
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = resources.getColor(R.color.deep_purple_900)
     }
 
 }

@@ -12,9 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -107,6 +105,11 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
+    override fun onStart() {
+        super.onStart()
+        val window: Window = requireActivity().getWindow()
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = resources.getColor(R.color.blue_50)    }
     private fun setBottomSheet() {
         GlobalScope.launch(Dispatchers.Main) {
             bottomSheetView =

@@ -1,9 +1,7 @@
 package com.example.downloadcoroutines.ui.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import com.example.downloadcoroutines.R
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -30,5 +28,11 @@ class SearchFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_search, container, false)
     }
 
+    override fun onStart() {
+        super.onStart()
+        val window: Window = requireActivity().getWindow()
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = resources.getColor(R.color.gray_deep)
+    }
 
 }
