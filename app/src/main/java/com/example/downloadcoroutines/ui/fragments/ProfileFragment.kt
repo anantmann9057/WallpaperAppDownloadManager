@@ -24,7 +24,7 @@ class ProfileFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false)
-        binding.animeProfile.setAnimationFromUrl("https://assets5.lottiefiles.com/packages/lf20_ibsbm9w2.json")
+        binding.animeProfile.setAnimationFromUrl("https://assets7.lottiefiles.com/packages/lf20_dgsA0b.json")
         binding.animeProfilePic.setAnimationFromUrl("https://assets7.lottiefiles.com/datafiles/6deVuMSwjYosId3/data.json")
         return binding.root
     }
