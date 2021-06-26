@@ -7,15 +7,26 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvImages"
+    <fragment
+        android:id="@+id/fragentNav"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavHome"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/home_navigation" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavHome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_botton_nav"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
+        app:layout_constraintTop_toBottomOf="@id/fragentNav"
+        app:menu="@menu/home_menu" />
 </androidx.constraintlayout.widget.ConstraintLayout>
