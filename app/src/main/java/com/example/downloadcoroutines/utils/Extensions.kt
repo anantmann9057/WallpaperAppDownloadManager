@@ -10,7 +10,7 @@ import retrofit2.Response
 
 
 const val MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1
-
+val WEB_LINK ="WEB_LINK"
 internal fun Context.showToast(mssg: Any) {
     Toast.makeText(this, mssg.toString(), Toast.LENGTH_SHORT).show()
 }

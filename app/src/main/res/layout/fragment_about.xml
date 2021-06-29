@@ -37,7 +37,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/animeHeaderHome">
+            app:layout_constraintTop_toBottomOf="@id/animeHeaderInfo">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -88,8 +88,8 @@
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_50sdp"
                     android:layout_marginTop="@dimen/_10sdp"
-                    app:layout_constraintRight_toLeftOf="@id/animeFacebook"
                     app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/animeFacebook"
                     app:layout_constraintTop_toBottomOf="@id/tvContactLabel"
                     app:lottie_autoPlay="true"
                     app:lottie_loop="true" />
@@ -99,19 +99,19 @@
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_50sdp"
                     android:layout_marginTop="@dimen/_10sdp"
-                    app:layout_constraintRight_toLeftOf="@id/animeInstagram"
                     app:layout_constraintLeft_toRightOf="@id/animeLinkedIn"
+                    app:layout_constraintRight_toLeftOf="@id/animeGithub"
                     app:layout_constraintTop_toBottomOf="@id/tvContactLabel"
                     app:lottie_autoPlay="true"
                     app:lottie_loop="true" />
 
                 <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/animeInstagram"
+                    android:id="@+id/animeGithub"
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_50sdp"
-                    app:layout_constraintRight_toRightOf="parent"
                     android:layout_marginTop="@dimen/_10sdp"
                     app:layout_constraintLeft_toRightOf="@id/animeFacebook"
+                    app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvContactLabel"
                     app:lottie_autoPlay="true"
                     app:lottie_loop="true" />
