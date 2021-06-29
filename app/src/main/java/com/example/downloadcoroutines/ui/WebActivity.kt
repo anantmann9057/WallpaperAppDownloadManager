@@ -39,4 +39,11 @@ class WebActivity : BaseActivity() {
             dismissDialog()
         }
     }
+
+    override fun onBackPressed() {
+        if (wvProfileLinks.canGoBack()) {
+            wvProfileLinks.goBack()
+        } else
+            super.onBackPressed()
+    }
 }

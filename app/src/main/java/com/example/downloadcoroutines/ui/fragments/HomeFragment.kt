@@ -39,7 +39,7 @@ import kotlinx.coroutines.*
 import java.io.File
 
 
-class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any>{
+class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
     lateinit var job: Job
 
 
@@ -126,7 +126,6 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any>{
     }
 
 
-
     private fun initPicsAdapter() {
         if (!::genericAdapter.isInitialized) {
             genericAdapter =
@@ -151,17 +150,12 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any>{
 
     fun setPicsAdapter(page: Int) {
         showDialog()
-        CoroutineScope(Dispatchers.IO).launch {
-            async {
-                viewmodel.getPics(page, 10)
-            }.await()
-        }
+        viewmodel.getPics(page, 10)
         if (!viewmodel.picsResponse.hasActiveObservers()) {
             viewmodel.picsResponse.observe(requireActivity(), Observer
             {
                 if (it == null) {
                     CoroutineScope(Dispatchers.IO).launch {
-                        delay(3000)
                         repeat(3) {
                             viewmodel.getPics(page, 10)
                         }
@@ -260,7 +254,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any>{
                     DownloadManager.STATUS_RUNNING -> {
                     }
                     DownloadManager.STATUS_SUCCESSFUL -> {
-                       dismissDialog()
+                        dismissDialog()
 
                     }
                 }

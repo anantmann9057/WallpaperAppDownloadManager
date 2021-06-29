@@ -9,7 +9,7 @@
     <string name="mobile_number">Mobile Number</string>
     <string name="submit">Submit</string>
     <string name="search">Search</string>
-    <string name="about">About This App and Me</string>
+    <string name="about">About This App</string>
     <string name="disclaimer">This app was just made out for practise and code is purely written in kotlin, if you like my work and want the source code you can get the code from github. If you any Ideas on how can I improve this app Further please feel free to tell me. Thanks</string>
     <string name="contact_me">Contact Me</string>
 </resources>

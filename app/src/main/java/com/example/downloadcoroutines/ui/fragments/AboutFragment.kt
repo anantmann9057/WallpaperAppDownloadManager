@@ -40,7 +40,8 @@ class AboutFragment : BaseFragment() {
             it.setAnimationFromUrl("https://assets10.lottiefiles.com/packages/lf20_totrpclr.json")
         }
         animeLinkedIn.let {
-            it.setAnimationFromUrl("https://assets3.lottiefiles.com/private_files/lf30_nfrwwnhp.json")
+            it.setAnimationFromUrl("https://assets7.lottiefiles.com/packages/lf20_hwvh0smy.json")
+            it.speed = 0.5f
             it.setOnClickListener {
                 intent.putExtra(WEB_LINK, "https://www.linkedin.com/in/anantmann/")
                 startActivity(intent)
