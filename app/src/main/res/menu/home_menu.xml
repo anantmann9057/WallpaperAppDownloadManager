@@ -13,6 +13,10 @@
             android:id="@+id/profileFragment"
             android:icon="@drawable/ic_baseline_person_24"
             android:title="Profile" />
+        <item
+            android:id="@+id/aboutFragment"
+            android:icon="@drawable/ic_baseline_info_24"
+            android:title="Profile" />
 
     </group>
 </menu>

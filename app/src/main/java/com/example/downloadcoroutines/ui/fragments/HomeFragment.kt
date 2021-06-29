@@ -31,13 +31,15 @@ import com.example.downloadcoroutines.modelClasses.SpecialistsModel
 import com.example.downloadcoroutines.viewModel.PicsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nexogic.adapters.DataBindingAdapter
+import com.nexogic.base.BaseFragment
 import kotlinx.android.synthetic.main.bottomsheet_layout.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.layout_dialog.*
 import kotlinx.coroutines.*
 import java.io.File
 
 
-class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
+class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any>{
     lateinit var job: Job
 
 
@@ -50,7 +52,6 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
     lateinit var genericAdapter: GenericAdapter
     lateinit var imageList: ArrayList<SpecialistsModel>
 
-    val dialog by lazy { Dialog(requireContext()) }
 
     lateinit var bottomSheetView: View
     private lateinit var bottomSheetDialog: BottomSheetDialog
@@ -109,7 +110,9 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
         super.onStart()
         val window: Window = requireActivity().getWindow()
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = resources.getColor(R.color.blue_50)    }
+        window.statusBarColor = resources.getColor(R.color.blue_50)
+    }
+
     private fun setBottomSheet() {
         GlobalScope.launch(Dispatchers.Main) {
             bottomSheetView =
@@ -121,6 +124,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
 
         }
     }
+
 
 
     private fun initPicsAdapter() {
@@ -146,6 +150,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
     }
 
     fun setPicsAdapter(page: Int) {
+        showDialog()
         CoroutineScope(Dispatchers.IO).launch {
             async {
                 viewmodel.getPics(page, 10)
@@ -158,11 +163,12 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
                     CoroutineScope(Dispatchers.IO).launch {
                         delay(3000)
                         repeat(3) {
-                            viewmodel.getPics(page,10)
+                            viewmodel.getPics(page, 10)
                         }
-
+                        dismissDialog()
                     }
                 } else {
+                    dismissDialog()
                     rvCat.apply {
                         isNestedScrollingEnabled = false
                         layoutManager = LinearLayoutManager(
@@ -203,7 +209,7 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun downloadFile(url: String, fileName: String? = null) {
-        dialog.show()
+        showDialog()
         val directory = File(Environment.DIRECTORY_DOWNLOADS)
 
         if (!directory.exists()) {
@@ -244,17 +250,17 @@ class HomeFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
                 val fileStatus = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
                 when (fileStatus) {
                     DownloadManager.STATUS_FAILED -> {
-                        dialog.dismiss()
+                        dismissDialog()
                     }
                     DownloadManager.STATUS_PAUSED -> {
-                        dialog.dismiss()
+                        dismissDialog()
                     }
                     DownloadManager.STATUS_PENDING -> {
                     }
                     DownloadManager.STATUS_RUNNING -> {
                     }
                     DownloadManager.STATUS_SUCCESSFUL -> {
-                        dialog.dismiss()
+                       dismissDialog()
 
                     }
                 }

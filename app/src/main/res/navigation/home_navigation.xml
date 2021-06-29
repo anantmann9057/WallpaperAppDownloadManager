@@ -19,4 +19,8 @@
         android:name="com.example.downloadcoroutines.ui.fragments.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.downloadcoroutines.ui.fragments.AboutFragment"
+        android:label="AboutFragment" />
 </navigation>
