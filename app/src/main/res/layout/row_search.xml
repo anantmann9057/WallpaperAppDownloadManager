@@ -18,9 +18,11 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_5sdp">
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="match_parent"
+        android:backgroundTint="@color/transparent"
+        android:layout_margin="@dimen/_5sdp"
+       >
 
 
         <TextView
@@ -40,7 +42,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardIImage"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:elevation="@dimen/_5sdp"
             android:onClick="@{(view)-> itemClickListener.onItemClick(view,index,model)}"
             app:cardCornerRadius="@dimen/_10sdp"
@@ -53,7 +55,7 @@
             <ImageView
                 filter="@{model.download_url}"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:scaleType="fitXY" />
         </androidx.cardview.widget.CardView>
 

@@ -7,6 +7,10 @@ data class SpecialistsModel(
 
     val id: String? = null,
 
-    val url: String? = null
+    val url: String? = null,
+
+    var placeHolderUrl: String? = null,
+
+    var isVisible: Boolean? = false
 ) {
 }

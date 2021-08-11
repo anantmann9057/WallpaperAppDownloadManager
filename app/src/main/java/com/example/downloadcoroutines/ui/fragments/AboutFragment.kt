@@ -2,7 +2,6 @@ package com.example.downloadcoroutines.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,28 +35,28 @@ class AboutFragment : BaseFragment() {
 
     fun setAnimations() {
         var intent = Intent(requireContext(), WebActivity::class.java)
-        animeHeaderInfo.let {
-            it.setAnimationFromUrl("https://assets10.lottiefiles.com/packages/lf20_totrpclr.json")
+        animeHeaderInfo.apply {
+            setAnimationFromUrl("https://assets10.lottiefiles.com/packages/lf20_totrpclr.json")
         }
-        animeLinkedIn.let {
-            it.setAnimationFromUrl("https://assets7.lottiefiles.com/packages/lf20_hwvh0smy.json")
-            it.speed = 0.5f
-            it.setOnClickListener {
+        animeLinkedIn.apply {
+            setAnimationFromUrl("https://assets7.lottiefiles.com/packages/lf20_hwvh0smy.json")
+            speed = 0.5f
+            setOnClickListener {
                 intent.putExtra(WEB_LINK, "https://www.linkedin.com/in/anantmann/")
                 startActivity(intent)
             }
         }
 
-        animeFacebook.let {
-            it.setAnimationFromUrl("https://assets9.lottiefiles.com/packages/lf20_oGizJg.json")
-            it.setOnClickListener {
+        animeFacebook.apply {
+            setAnimationFromUrl("https://assets9.lottiefiles.com/packages/lf20_oGizJg.json")
+            setOnClickListener {
                 intent.putExtra(WEB_LINK, "https://www.facebook.com/anant.mann.5")
                 startActivity(intent)
             }
         }
-        animeGithub.let {
-            it.setAnimationFromUrl("https://assets2.lottiefiles.com/packages/lf20_dgBN4P.json")
-            it.setOnClickListener {
+        animeGithub.apply {
+            setAnimationFromUrl("https://assets2.lottiefiles.com/packages/lf20_dgBN4P.json")
+            setOnClickListener {
                 intent.putExtra(WEB_LINK, "https://github.com/anantmann9057")
                 startActivity(intent)
             }

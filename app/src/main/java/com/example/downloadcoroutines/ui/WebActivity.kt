@@ -1,7 +1,6 @@
 package com.example.downloadcoroutines.ui
 
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -20,12 +19,15 @@ class WebActivity : BaseActivity() {
     }
 
     fun setWebView() {
-        wvProfileLinks.loadUrl(url!!)
-        wvProfileLinks.settings.javaScriptCanOpenWindowsAutomatically = false
-        wvProfileLinks.settings.javaScriptEnabled = true
-        wvProfileLinks.settings.loadsImagesAutomatically = true
-        wvProfileLinks.settings.allowFileAccess = true
-        wvProfileLinks.webViewClient = client
+        wvProfileLinks.apply {
+            loadUrl(url!!)
+            settings.javaScriptCanOpenWindowsAutomatically = false
+            settings.javaScriptEnabled = true
+            settings.loadsImagesAutomatically = true
+            settings.allowFileAccess = true
+            webViewClient = client
+        }
+
     }
 
     var client = object : WebViewClient() {

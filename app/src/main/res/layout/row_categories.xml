@@ -29,12 +29,12 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:cardCornerRadius="@dimen/_5sdp"
+            app:cardCornerRadius="@dimen/_10sdp"
             android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/ivCategory"
-                android:layout_width="@dimen/_200sdp"
-                android:layout_height="@dimen/_250sdp"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_150sdp"
                 app:blurred="@{model.download_url}"
                 android:scaleType="fitXY"
                 android:onClick="@{(view)-> itemClickListener.onItemClick(view,index,model)}"
@@ -47,14 +47,18 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/comic"
             android:text="@{model.author}"
-            android:layout_marginHorizontal="@dimen/_2sdp"
+            android:layout_marginHorizontal="@dimen/_5sdp"
             android:textAlignment="center"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMaxTextSize="@dimen/_10sdp"
+            android:autoSizeMinTextSize="@dimen/_8sdp"
             android:textColor="@color/white"
             android:elevation="@dimen/_5sdp"
             android:textSize="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="@id/cardCategory"
             app:layout_constraintLeft_toLeftOf="@id/cardCategory"
             app:layout_constraintRight_toRightOf="@id/cardCategory"
-            app:layout_constraintTop_toTopOf="@id/cardCategory" />
+             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

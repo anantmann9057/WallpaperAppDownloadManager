@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -40,6 +41,13 @@ class DataBindingAdapter {
 
             }
 
+
+        }
+
+        @JvmStatic
+        @BindingAdapter("app:placeholder")
+        fun setPlaceholder(animationView: LottieAnimationView, imageURL: String) {
+            animationView.setAnimationFromUrl(imageURL)
 
         }
 

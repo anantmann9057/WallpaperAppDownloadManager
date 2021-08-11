@@ -1,13 +1,10 @@
 package com.example.downloadcoroutines.ui.fragments
 
 import android.Manifest
-import android.animation.ArgbEvaluator
-import android.app.Dialog
 import android.app.DownloadManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -18,7 +15,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,7 +41,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
 
     var page = 1
 
-    lateinit var layoutManager: RecyclerView.LayoutManager
+    lateinit var gridLayoutManager: RecyclerView.LayoutManager
 
     lateinit var viewmodel: PicsViewModel
 
@@ -65,7 +61,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
         super.onActivityCreated(savedInstanceState)
 
 
-        layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+        gridLayoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
 
         setBottomSheet()
 
@@ -74,14 +70,19 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
             viewmodel = ViewModelProvider(this).get(PicsViewModel::class.java)
 
         }
-        initPicsAdapter()
         setPicsAdapter(page)
         nestedHome.setOnScrollChangeListener(nestedScrollListener)
 
+        if (imageList.isNullOrEmpty()) {
+            for (i in imageList){
+                i.placeHolderUrl ="https://assets7.lottiefiles.com/packages/lf20_ynwbrgau.json"
+                i.isVisible=true
+            }
+        }
         animeHeaderHome.setAnimationFromUrl("https://assets7.lottiefiles.com/packages/lf20_ynwbrgau.json")
     }
 
-    var nestedScrollListener = object : NestedScrollView.OnScrollChangeListener {
+    private var nestedScrollListener = object : NestedScrollView.OnScrollChangeListener {
         override fun onScrollChange(
             v: NestedScrollView?,
             scrollX: Int,
@@ -126,18 +127,18 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
     }
 
 
-    private fun initPicsAdapter() {
+    private fun initPicsAdapter(list:ArrayList<Any>) {
         if (!::genericAdapter.isInitialized) {
             genericAdapter =
                 GenericAdapter(
-                    imageList as ArrayList<Any>,
+                    list,
                     this,
                     R.layout.row_home_pics
                 )
-            rvImages.let {
-                it.isNestedScrollingEnabled = false
-                it.layoutManager = layoutManager
-                it.adapter = genericAdapter
+            rvImages.apply {
+                isNestedScrollingEnabled = false
+                layoutManager = gridLayoutManager
+                adapter = genericAdapter
 
             }
             if (imageList.isNotEmpty()) {
@@ -163,6 +164,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                     }
                 } else {
                     dismissDialog()
+                    initPicsAdapter(it as ArrayList<Any>)
                     rvCat.apply {
                         isNestedScrollingEnabled = false
                         layoutManager = LinearLayoutManager(
@@ -317,13 +319,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
         if (`object` is SpecialistsModel) {
             when (view?.id) {
                 R.id.ivCategory -> {
-                    var list = imageList.filter {
-                        it.author.equals(`object`.author)
-                    }
-                    genericAdapter =
-                        GenericAdapter(list as ArrayList<Any>, this, R.layout.row_home_pics)
-                    rvImages.adapter = genericAdapter
-                    genericAdapter.notifyAdapter(list as ArrayList<Any>)
+
                 }
                 R.id.cardIImage -> {
 
@@ -349,5 +345,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
 
         }
     }
+
+
 
 }
