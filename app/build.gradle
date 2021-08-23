@@ -96,6 +96,7 @@ dependencies {
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
     kapt "androidx.room:room-compiler:$room_version"
 
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
 
     implementation 'com.amazonaws:aws-android-sdk-s3:2.13.7'
 

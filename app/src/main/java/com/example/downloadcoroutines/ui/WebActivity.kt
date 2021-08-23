@@ -4,28 +4,31 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.databinding.DataBindingUtil
 import com.example.downloadcoroutines.R
 import com.example.downloadcoroutines.WEB_LINK
+import com.example.downloadcoroutines.databinding.ActivityWebBinding
 import com.nexogic.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_web.*
 
 class WebActivity : BaseActivity() {
-    val url by lazy { intent.getStringExtra(WEB_LINK) }
+    lateinit var url: String
+    lateinit var binding: ActivityWebBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_web)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_web)
+        url = intent.getStringExtra(WEB_LINK)!!
         setWebView()
 
     }
 
     fun setWebView() {
-        wvProfileLinks.apply {
-            loadUrl(url!!)
-            settings.javaScriptCanOpenWindowsAutomatically = false
-            settings.javaScriptEnabled = true
-            settings.loadsImagesAutomatically = true
-            settings.allowFileAccess = true
-            webViewClient = client
+        binding.wvProfileLinks.let {
+            it.loadUrl(url)
+            it.settings.javaScriptCanOpenWindowsAutomatically = false
+            it.settings.javaScriptEnabled = true
+            it.settings.loadsImagesAutomatically = true
+            it.settings.allowFileAccess = true
+            it.webViewClient = client
         }
 
     }
@@ -43,8 +46,8 @@ class WebActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (wvProfileLinks.canGoBack()) {
-            wvProfileLinks.goBack()
+        if (binding.wvProfileLinks.canGoBack()) {
+            binding.wvProfileLinks.goBack()
         } else
             super.onBackPressed()
     }

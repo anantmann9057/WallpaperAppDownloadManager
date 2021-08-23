@@ -9,6 +9,9 @@ import com.example.downloadcoroutines.enqueue
 import com.example.downloadcoroutines.modelClasses.SpecialistsModel
 import com.example.downloadcoroutines.showToast
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class PicsViewModel(application: Application) : AndroidViewModel(application) {
@@ -19,10 +22,10 @@ class PicsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val call by lazy { getApplication<App>().apiService }
 
+
     fun getPics(page: Int, limit: Int) {
 
-        viewModelScope.launch(Dispatchers.IO)
-        {
+        viewModelScope.launch {
 
             call!!.getPics(page, limit).enqueue {
 
@@ -34,6 +37,11 @@ class PicsViewModel(application: Application) : AndroidViewModel(application) {
                     context?.showToast(it!!.localizedMessage.toString())
                 }
             }
+
         }
     }
+
+
+
+
 }

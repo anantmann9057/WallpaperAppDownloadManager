@@ -33,7 +33,7 @@ class AboutFragment : BaseFragment() {
 
     }
 
-    fun setAnimations() {
+   private fun setAnimations() {
         var intent = Intent(requireContext(), WebActivity::class.java)
         animeHeaderInfo.apply {
             setAnimationFromUrl("https://assets10.lottiefiles.com/packages/lf20_totrpclr.json")

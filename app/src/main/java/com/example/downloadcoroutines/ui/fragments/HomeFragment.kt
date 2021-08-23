@@ -74,9 +74,9 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
         nestedHome.setOnScrollChangeListener(nestedScrollListener)
 
         if (imageList.isNullOrEmpty()) {
-            for (i in imageList){
-                i.placeHolderUrl ="https://assets7.lottiefiles.com/packages/lf20_ynwbrgau.json"
-                i.isVisible=true
+            for (i in imageList) {
+                i.placeHolderUrl = "https://assets7.lottiefiles.com/packages/lf20_ynwbrgau.json"
+                i.isVisible = true
             }
         }
         animeHeaderHome.setAnimationFromUrl("https://assets7.lottiefiles.com/packages/lf20_ynwbrgau.json")
@@ -127,7 +127,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
     }
 
 
-    private fun initPicsAdapter(list:ArrayList<Any>) {
+    private fun initPicsAdapter(list: ArrayList<Any>) {
         if (!::genericAdapter.isInitialized) {
             genericAdapter =
                 GenericAdapter(
@@ -149,9 +149,11 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
         }
     }
 
+
     fun setPicsAdapter(page: Int) {
         showDialog()
         viewmodel.getPics(page, 10)
+
         if (!viewmodel.picsResponse.hasActiveObservers()) {
             viewmodel.picsResponse.observe(requireActivity(), Observer
             {
@@ -164,6 +166,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                     }
                 } else {
                     dismissDialog()
+
                     initPicsAdapter(it as ArrayList<Any>)
                     rvCat.apply {
                         isNestedScrollingEnabled = false
@@ -345,7 +348,6 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
 
         }
     }
-
 
 
 }
