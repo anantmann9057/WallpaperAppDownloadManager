@@ -1,6 +1,6 @@
 package com.example.downloadcoroutines.modelClasses
 
-data class SpecialistsModel(
+data class PicsModel(
     val author: String? = null,
 
     val download_url: String? = null,

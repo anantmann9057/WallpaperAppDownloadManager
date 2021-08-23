@@ -1,6 +1,6 @@
 package com.nexogic.apiservices
 
-import com.example.downloadcoroutines.modelClasses.SpecialistsModel
+import com.example.downloadcoroutines.modelClasses.PicsModel
 
 import retrofit2.Call
 import retrofit2.http.*
@@ -13,6 +13,6 @@ interface ApiInterface {
     fun getPics(
         @Query("page") page: Int,
         @Query("limit") limit: Int
-    ): Call<ArrayList<SpecialistsModel>>
+    ): Call<ArrayList<PicsModel>>
 
 }

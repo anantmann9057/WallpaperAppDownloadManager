@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.downloadcoroutines.R
 import com.example.downloadcoroutines.adapters.GenericAdapter
-import com.example.downloadcoroutines.modelClasses.SpecialistsModel
+import com.example.downloadcoroutines.modelClasses.PicsModel
 import com.example.downloadcoroutines.viewModel.PicsViewModel
 import kotlinx.android.synthetic.main.fragment_search.*
 
@@ -21,7 +21,7 @@ class SearchFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
     private lateinit var layoutManager: RecyclerView.LayoutManager
 
     private lateinit var viewmodel: PicsViewModel
-    private lateinit var searchList: ArrayList<SpecialistsModel>
+    private lateinit var searchList: ArrayList<PicsModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

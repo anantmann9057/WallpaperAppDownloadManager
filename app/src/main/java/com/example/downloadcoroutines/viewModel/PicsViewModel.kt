@@ -6,17 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.downloadcoroutines.App
 import com.example.downloadcoroutines.enqueue
-import com.example.downloadcoroutines.modelClasses.SpecialistsModel
+import com.example.downloadcoroutines.modelClasses.PicsModel
 import com.example.downloadcoroutines.showToast
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class PicsViewModel(application: Application) : AndroidViewModel(application) {
 
-    val picsResponse by lazy { MutableLiveData<ArrayList<SpecialistsModel>>() }
+    val picsResponse by lazy { MutableLiveData<ArrayList<PicsModel>>() }
 
     val context by lazy { (getApplication() as App).appContext }
 

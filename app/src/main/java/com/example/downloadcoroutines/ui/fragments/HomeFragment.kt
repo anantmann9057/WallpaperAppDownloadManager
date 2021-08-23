@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.downloadcoroutines.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
 import com.example.downloadcoroutines.R
 import com.example.downloadcoroutines.adapters.GenericAdapter
-import com.example.downloadcoroutines.modelClasses.SpecialistsModel
+import com.example.downloadcoroutines.modelClasses.PicsModel
 import com.example.downloadcoroutines.viewModel.PicsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nexogic.adapters.DataBindingAdapter
@@ -46,7 +46,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
     lateinit var viewmodel: PicsViewModel
 
     lateinit var genericAdapter: GenericAdapter
-    lateinit var imageList: ArrayList<SpecialistsModel>
+    lateinit var imageList: ArrayList<PicsModel>
 
 
     lateinit var bottomSheetView: View
@@ -188,7 +188,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                     } else {
                         for (i in it) {
                             imageList.add(
-                                SpecialistsModel(
+                                PicsModel(
                                     i.author,
                                     i.download_url,
                                     i.id,
@@ -319,7 +319,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onItemClick(view: View?, position: Int, `object`: Any) {
-        if (`object` is SpecialistsModel) {
+        if (`object` is PicsModel) {
             when (view?.id) {
                 R.id.ivCategory -> {
 
