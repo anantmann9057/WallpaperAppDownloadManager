@@ -3,6 +3,6 @@
     <gradient
         android:type="linear"
         android:angle="0"
-        android:startColor="@color/shimmer_color"
+        android:startColor="@color/overlay_dark_10"
         android:endColor="@color/white" />
 </shape>

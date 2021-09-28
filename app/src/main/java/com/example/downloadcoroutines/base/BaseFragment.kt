@@ -1,21 +1,21 @@
 package com.nexogic.base
 
-import android.app.Dialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import com.example.downloadcoroutines.R
+import androidx.fragment.app.Fragment
 import com.example.downloadcoroutines.utils.Preferences
-import kotlinx.android.synthetic.main.layout_dialog.*
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 open class BaseFragment : Fragment() {
+    @Inject
     lateinit var preference: Preferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        preference = Preferences(requireContext())
 
     }
 
@@ -29,11 +29,11 @@ open class BaseFragment : Fragment() {
     }
 
     fun showDialog() {
-        (context as BaseActivity).dialog.show()
+        (requireActivity() as BaseActivity).dialog.show()
     }
 
     fun dismissDialog() {
-        (context as BaseActivity).dialog.dismiss()
+        (requireActivity() as BaseActivity).dialog.dismiss()
     }
 
 

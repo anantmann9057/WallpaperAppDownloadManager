@@ -22,6 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_5sdp">
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cardCategory"
             android:layout_width="wrap_content"
@@ -31,14 +32,14 @@
             app:layout_constraintTop_toTopOf="parent"
             app:cardCornerRadius="@dimen/_10sdp"
             android:layout_height="wrap_content">
+
             <ImageView
                 android:id="@+id/ivCategory"
                 android:layout_width="@dimen/_100sdp"
                 android:layout_height="@dimen/_150sdp"
                 app:blurred="@{model.download_url}"
                 android:scaleType="fitXY"
-                android:onClick="@{(view)-> itemClickListener.onItemClick(view,index,model)}"
-                />
+                android:onClick="@{(view)-> itemClickListener.onItemClick(view,index,model)}" />
         </androidx.cardview.widget.CardView>
 
 
@@ -58,7 +59,6 @@
             android:layout_marginBottom="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="@id/cardCategory"
             app:layout_constraintLeft_toLeftOf="@id/cardCategory"
-            app:layout_constraintRight_toRightOf="@id/cardCategory"
-             />
+            app:layout_constraintRight_toRightOf="@id/cardCategory" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

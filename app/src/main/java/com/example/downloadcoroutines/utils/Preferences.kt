@@ -3,8 +3,10 @@ package com.example.downloadcoroutines.utils
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class Preferences(context: Context) {
+class Preferences @Inject constructor(@ApplicationContext context: Context) {
     private val USER_PREFS = "taw_prefs"
     private val IS_FIRST_TIME = "isFirstTime"
     private val RESUME_PREF = "resume_pref"

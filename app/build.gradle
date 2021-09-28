@@ -3,6 +3,8 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
+    id("dagger.hilt.android.plugin")
+
 }
 
 android {
@@ -48,39 +50,21 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    //coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
-    //retrofit and interceptor
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
-    //picasso
-    implementation 'com.squareup.picasso:picasso:2.71828'
+
     //sdp
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
     //cicle imageview
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-    //life cycle extensions and view model
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-common:2.3.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+
     //glide
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
-    //glide transformations
     implementation 'jp.wasabeef:glide-transformations:4.3.0'
-    //corousal layout manager
-    implementation 'com.azoft.carousellayoutmanager:carousel:1.4.5'
-    //shimmer
-    implementation 'com.ethanhua:skeleton:1.1.2'
-    implementation 'io.supercharge:shimmerlayout:2.1.0'
+
     //motion layout
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0-beta01'
-    //exoplayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.13.3'
+
     //navigation components
-    // Kotlin
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
@@ -92,19 +76,30 @@ dependencies {
     // lottie animation
     implementation 'com.airbnb.android:lottie:3.7.0'
 
-    implementation "androidx.room:room-runtime:$room_version"
-    implementation "androidx.legacy:legacy-support-v4:1.0.0"
-    kapt "androidx.room:room-compiler:$room_version"
-
     implementation "androidx.recyclerview:recyclerview:1.2.1"
 
-    implementation 'com.amazonaws:aws-android-sdk-s3:2.13.7'
+    // Dagger Hilt
+    implementation "com.google.dagger:hilt-android:2.35.1"
+    kapt "com.google.dagger:hilt-android-compiler:2.35.1"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
 
+    // Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
 
+    // Retrofit + GSON
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
 
+     // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.0"
 
+    // Fragment
+    implementation 'androidx.fragment:fragment-ktx:1.3.1'
 
+    //interceptor
+    implementation("com.squareup.okhttp3:logging-interceptor:4.3.1")
+}
 
-
-
+kapt {
+    correctErrorTypes true
 }

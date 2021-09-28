@@ -4,29 +4,28 @@ package com.nexogic.base
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Window
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.FragmentActivity
 import com.example.downloadcoroutines.R
-
 import com.example.downloadcoroutines.utils.Preferences
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.layout_dialog.*
+import javax.inject.Inject
 
 open class BaseActivity : FragmentActivity() {
+    @Inject
     lateinit var preference: Preferences
-    private var mSnackBar: Snackbar? = null
+
     lateinit var animeList: ArrayList<String>
+
     val dialog by lazy { Dialog(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        preference = Preferences(this)
         setDialog()
 
 
     }
 
-    private fun setDialog() {
+     fun setDialog() {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
         dialog.setContentView(R.layout.layout_dialog)

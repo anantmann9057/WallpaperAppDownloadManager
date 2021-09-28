@@ -5,9 +5,11 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.example.downloadcoroutines.R
 import com.nexogic.base.BaseActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity() {
     val navController by lazy { Navigation.findNavController(this, R.id.fragentNav) }
 

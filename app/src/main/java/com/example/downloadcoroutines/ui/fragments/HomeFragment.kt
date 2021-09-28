@@ -15,35 +15,42 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.downloadcoroutines.App
 import com.example.downloadcoroutines.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
 import com.example.downloadcoroutines.R
 import com.example.downloadcoroutines.adapters.GenericAdapter
 import com.example.downloadcoroutines.modelClasses.PicsModel
+import com.example.downloadcoroutines.showToast
 import com.example.downloadcoroutines.viewModel.PicsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nexogic.adapters.DataBindingAdapter
+import com.nexogic.base.BaseActivity
 import com.nexogic.base.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.bottomsheet_layout.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_dialog.*
 import kotlinx.coroutines.*
 import java.io.File
+import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
-    lateinit var job: Job
-
 
     var page = 1
 
+    @Inject
+    lateinit var app: App
+
     lateinit var gridLayoutManager: RecyclerView.LayoutManager
 
-    lateinit var viewmodel: PicsViewModel
+    val viewmodel: PicsViewModel by viewModels()
 
     lateinit var genericAdapter: GenericAdapter
     lateinit var imageList: ArrayList<PicsModel>
@@ -52,51 +59,10 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
     lateinit var bottomSheetView: View
     private lateinit var bottomSheetDialog: BottomSheetDialog
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-
-        gridLayoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
-
-        setBottomSheet()
-
-        imageList = ArrayList()
-        if (!::viewmodel.isInitialized) {
-            viewmodel = ViewModelProvider(this).get(PicsViewModel::class.java)
-
-        }
-        setPicsAdapter(page)
-        nestedHome.setOnScrollChangeListener(nestedScrollListener)
-
-        if (imageList.isNullOrEmpty()) {
-            for (i in imageList) {
-                i.placeHolderUrl = "https://assets7.lottiefiles.com/packages/lf20_ynwbrgau.json"
-                i.isVisible = true
-            }
-        }
-        animeHeaderHome.setAnimationFromUrl("https://assets7.lottiefiles.com/packages/lf20_ynwbrgau.json")
-    }
-
-    private var nestedScrollListener = object : NestedScrollView.OnScrollChangeListener {
-        override fun onScrollChange(
-            v: NestedScrollView?,
-            scrollX: Int,
-            scrollY: Int,
-            oldScrollX: Int,
-            oldScrollY: Int
-        ) {
-
-            if (scrollY == v!!.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
-                page++
-                setPicsAdapter(page)
-            }
-        }
-
+        initViews()
     }
 
     override fun onCreateView(
@@ -113,6 +79,37 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = resources.getColor(R.color.blue_50)
     }
+
+
+    fun initViews() {
+        gridLayoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+
+        setBottomSheet()
+
+        imageList = ArrayList()
+
+        setPicsAdapter(page)
+
+        nestedHome.setOnScrollChangeListener(nestedScrollListener)
+
+        if (imageList.isNullOrEmpty()) {
+            for (i in imageList) {
+                i.placeHolderUrl = "https://assets7.lottiefiles.com/packages/lf20_ynwbrgau.json"
+                i.isVisible = true
+            }
+        }
+        animeHeaderHome.setAnimationFromUrl("https://assets7.lottiefiles.com/packages/lf20_ynwbrgau.json")
+
+    }
+
+    private var nestedScrollListener =
+        NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+            if (scrollY == v!!.getChildAt(0).measuredHeight - v.measuredHeight) {
+                page++
+                setPicsAdapter(page)
+            }
+        }
+
 
     private fun setBottomSheet() {
         GlobalScope.launch(Dispatchers.Main) {
@@ -150,9 +147,16 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
     }
 
 
-    fun setPicsAdapter(page: Int) {
+    private fun setPicsAdapter(page: Int) {
         showDialog()
-        viewmodel.getPics(page, 10)
+        if (app.isNetworkConnected(requireActivity())) {
+            viewmodel.getPics(page, 10)
+
+        } else {
+            app.appContext!!.showToast("Internet not Connected")
+            imgNoConnection.visibility = View.VISIBLE
+            homeContent.visibility = View.GONE
+        }
 
         if (!viewmodel.picsResponse.hasActiveObservers()) {
             viewmodel.picsResponse.observe(requireActivity(), Observer
@@ -168,6 +172,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                     dismissDialog()
 
                     initPicsAdapter(it as ArrayList<Any>)
+
                     rvCat.apply {
                         isNestedScrollingEnabled = false
                         layoutManager = LinearLayoutManager(
@@ -182,6 +187,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                         )
                         setItemViewCacheSize(500)
                     }
+
                     if (imageList.isEmpty()) {
                         imageList = it
                         genericAdapter.notifyAdapter(it as ArrayList<Any>)
@@ -214,6 +220,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
         if (!directory.exists()) {
             directory.mkdirs()
         }
+
         val downloadManager =
             requireActivity().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
@@ -260,7 +267,6 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                     }
                     DownloadManager.STATUS_SUCCESSFUL -> {
                         dismissDialog()
-
                     }
                 }
                 cursor.close()
@@ -277,16 +283,12 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // Permission is not granted
-            // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(
                     requireActivity(),
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 )
             ) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
+
                 AlertDialog.Builder(requireContext())
                     .setTitle("Permission required")
                     .setMessage("Permission required to save files.")
@@ -300,19 +302,14 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                     .setNegativeButton("Deny") { dialog, id -> dialog.cancel() }
                     .show()
             } else {
-                // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(
                     requireActivity(),
                     arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
                 )
-                // MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
                 downloadFile(url, imageName)
             }
         } else {
-            // Permission has already been granted
             downloadFile(url, imageName)
         }
     }
@@ -321,9 +318,6 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
     override fun onItemClick(view: View?, position: Int, `object`: Any) {
         if (`object` is PicsModel) {
             when (view?.id) {
-                R.id.ivCategory -> {
-
-                }
                 R.id.cardIImage -> {
 
                     DataBindingAdapter.let {
@@ -339,8 +333,8 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                             )
                         }
                         tvAuthorName.text = `object`.author
-
                         show()
+
                     }
                 }
             }

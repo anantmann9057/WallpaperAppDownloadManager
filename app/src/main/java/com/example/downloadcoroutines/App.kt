@@ -2,38 +2,31 @@ package com.example.downloadcoroutines
 
 import android.app.Application
 import android.content.Context
+import android.net.ConnectivityManager
 import com.nexogic.apiservices.ApiInterface
-import com.nexogic.apiservices.NetworkUtility
+import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
-class App : Application() {
+@HiltAndroidApp
+class App @Inject constructor() : Application() {
     var appContext: Context? = null
 
     var instance: App? = null
 
-    private val TAG = App::class.java.name
-
-    var apiService: ApiInterface? = null
-
-
-    private val BASE_URL = "https://picsum.photos/"
     override fun onCreate() {
         super.onCreate()
         appContext = this
         instance = this
-        if (NetworkUtility.isNetworkConnected(appContext as App)==false){
-            showToast("Network not Connected")
-        }
-        basicSetupForAPI()
+        if (isNetworkConnected(appContext as App) == false) { (appContext as App).showToast("Network not Connected") }
 
 
     }
 
-    private fun basicSetupForAPI() {
-        val networkBuilder = NetworkUtility.Builder(BASE_URL, appContext!!)
-        networkBuilder.withConnectionTimeout(60)
-            .withReadTimeout(10)
-            .withShouldRetryOnConnectionFailure(true)
-            .build()
-        apiService = networkBuilder.retrofit!!.create(ApiInterface::class.java)
+    fun isNetworkConnected(context: Context): Boolean {
+        val connectivitymanager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkinfo = connectivitymanager.activeNetworkInfo
+        return !(networkinfo == null || !networkinfo.isConnectedOrConnecting)
     }
+
 }

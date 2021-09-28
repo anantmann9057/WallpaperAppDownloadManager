@@ -2,6 +2,7 @@ package com.example.downloadcoroutines.ui
 
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.databinding.DataBindingUtil
@@ -16,16 +17,22 @@ class WebActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_web)
+        setViews()
+    }
+
+   private fun setViews() {
         url = intent.getStringExtra(WEB_LINK)!!
         setWebView()
 
     }
 
-    fun setWebView() {
+    private fun setWebView() {
         binding.wvProfileLinks.let {
             it.loadUrl(url)
             it.settings.javaScriptCanOpenWindowsAutomatically = false
             it.settings.javaScriptEnabled = true
+            it.settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK)
+            it.settings.setAppCacheEnabled(true)
             it.settings.loadsImagesAutomatically = true
             it.settings.allowFileAccess = true
             it.webViewClient = client
@@ -33,7 +40,7 @@ class WebActivity : BaseActivity() {
 
     }
 
-    var client = object : WebViewClient() {
+   private var client = object : WebViewClient() {
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
             showDialog()

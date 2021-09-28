@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,14 +14,16 @@ import com.example.downloadcoroutines.R
 import com.example.downloadcoroutines.adapters.GenericAdapter
 import com.example.downloadcoroutines.modelClasses.PicsModel
 import com.example.downloadcoroutines.viewModel.PicsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_search.*
 
 
+@AndroidEntryPoint
 class SearchFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
     private lateinit var searchAdapter: GenericAdapter
     private lateinit var layoutManager: RecyclerView.LayoutManager
 
-    private lateinit var viewmodel: PicsViewModel
+    val viewmodel: PicsViewModel by viewModels()
     private lateinit var searchList: ArrayList<PicsModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,16 +55,13 @@ class SearchFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
         window.statusBarColor = resources.getColor(R.color.gray_deep)
     }
 
-    fun initViews() {
+    private fun initViews() {
         animeSearch.setAnimationFromUrl("https://assets10.lottiefiles.com/packages/lf20_gd2nnpqy.json")
 
         layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
 
         searchList = ArrayList()
-        if (!::viewmodel.isInitialized) {
-            viewmodel = ViewModelProvider(this).get(PicsViewModel::class.java)
 
-        }
         setSearchAdapter()
 
         edSearch.doOnTextChanged { _, _, _, _ ->
@@ -79,18 +79,18 @@ class SearchFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
         }
     }
 
-    fun setSearchAdapter() {
+    private fun setSearchAdapter() {
 
         viewmodel.getPics(1, 500)
         if (!viewmodel.picsResponse.hasActiveObservers()) {
-            viewmodel.picsResponse.observe(viewLifecycleOwner, Observer {
+            viewmodel.picsResponse.observe(viewLifecycleOwner){
                 if (it == null) {
-                    return@Observer
+                    return@observe
                 } else {
                     searchList = it
                 }
 
-            })
+            }
         }
 
 
