@@ -2,13 +2,11 @@ package com.example.downloadcoroutines.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.example.downloadcoroutines.R
-import com.example.downloadcoroutines.WEB_LINK
+import com.example.downloadcoroutines.utils.WEB_LINK
 import com.example.downloadcoroutines.ui.WebActivity
-import com.nexogic.base.BaseFragment
+import com.example.downloadcoroutines.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_about.*
 
 
@@ -33,8 +31,8 @@ class AboutFragment : BaseFragment() {
 
     }
 
-   private fun setAnimations() {
-        var intent = Intent(requireContext(), WebActivity::class.java)
+    private fun setAnimations() {
+        val intent = Intent(requireContext(), WebActivity::class.java)
         animeHeaderInfo.apply {
             setAnimationFromUrl("https://assets10.lottiefiles.com/packages/lf20_totrpclr.json")
         }
@@ -63,8 +61,12 @@ class AboutFragment : BaseFragment() {
         }
     }
 
+
     override fun onStart() {
         super.onStart()
+        val window: Window = requireActivity().getWindow()
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = resources.getColor(R.color.blue_50)
     }
 
 }

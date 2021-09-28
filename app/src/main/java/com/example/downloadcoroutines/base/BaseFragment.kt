@@ -1,4 +1,4 @@
-package com.nexogic.base
+package com.example.downloadcoroutines.base
 
 import android.os.Bundle
 import android.view.LayoutInflater

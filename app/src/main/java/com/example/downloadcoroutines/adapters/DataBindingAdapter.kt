@@ -1,4 +1,4 @@
-package com.nexogic.adapters
+package com.example.downloadcoroutines.adapters
 
 
 import android.graphics.Bitmap
@@ -14,7 +14,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.downloadcoroutines.R
-import com.example.downloadcoroutines.getDominantColor
+import com.example.downloadcoroutines.utils.getDominantColor
 import jp.wasabeef.glide.transformations.BlurTransformation
 
 

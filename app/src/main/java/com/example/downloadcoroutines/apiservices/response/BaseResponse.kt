@@ -1,4 +1,4 @@
-package com.nexogic.apiservices.response
+package com.example.downloadcoroutines.apiservices.response
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

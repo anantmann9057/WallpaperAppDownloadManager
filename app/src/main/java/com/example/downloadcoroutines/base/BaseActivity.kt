@@ -1,4 +1,4 @@
-package com.nexogic.base
+package com.example.downloadcoroutines.base
 
 
 import android.app.Dialog

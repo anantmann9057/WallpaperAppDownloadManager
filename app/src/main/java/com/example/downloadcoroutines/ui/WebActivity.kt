@@ -1,5 +1,6 @@
 package com.example.downloadcoroutines.ui
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.webkit.WebSettings
@@ -7,9 +8,9 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.databinding.DataBindingUtil
 import com.example.downloadcoroutines.R
-import com.example.downloadcoroutines.WEB_LINK
+import com.example.downloadcoroutines.utils.WEB_LINK
 import com.example.downloadcoroutines.databinding.ActivityWebBinding
-import com.nexogic.base.BaseActivity
+import com.example.downloadcoroutines.base.BaseActivity
 
 class WebActivity : BaseActivity() {
     lateinit var url: String
@@ -21,12 +22,13 @@ class WebActivity : BaseActivity() {
     }
 
    private fun setViews() {
-        url = intent.getStringExtra(WEB_LINK)!!
         setWebView()
+   }
 
-    }
-
+    @SuppressLint("SetJavaScriptEnabled")
     private fun setWebView() {
+        url = intent.getStringExtra(WEB_LINK)!!
+
         binding.wvProfileLinks.let {
             it.loadUrl(url)
             it.settings.javaScriptCanOpenWindowsAutomatically = false

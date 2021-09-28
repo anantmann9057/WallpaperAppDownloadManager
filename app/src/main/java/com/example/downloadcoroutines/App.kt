@@ -3,7 +3,7 @@ package com.example.downloadcoroutines
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
-import com.nexogic.apiservices.ApiInterface
+import com.example.downloadcoroutines.utils.showToast
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -17,7 +17,7 @@ class App @Inject constructor() : Application() {
         super.onCreate()
         appContext = this
         instance = this
-        if (isNetworkConnected(appContext as App) == false) { (appContext as App).showToast("Network not Connected") }
+        if (!isNetworkConnected(appContext as App)) { (appContext as App).showToast("Network not Connected") }
 
 
     }

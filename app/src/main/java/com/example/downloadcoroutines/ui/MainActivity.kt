@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.example.downloadcoroutines.R
-import com.nexogic.base.BaseActivity
+import com.example.downloadcoroutines.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 
