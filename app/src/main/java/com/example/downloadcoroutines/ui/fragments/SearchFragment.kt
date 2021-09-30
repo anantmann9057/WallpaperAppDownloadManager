@@ -5,14 +5,14 @@ import android.view.*
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.downloadcoroutines.R
 import com.example.downloadcoroutines.adapters.GenericAdapter
 import com.example.downloadcoroutines.modelClasses.PicsModel
+import com.example.downloadcoroutines.utils.Status
+import com.example.downloadcoroutines.utils.showToast
 import com.example.downloadcoroutines.viewModel.PicsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -83,12 +83,16 @@ class SearchFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
 
         viewmodel.getPics(1, 500)
         if (!viewmodel.picsResponse.hasActiveObservers()) {
-            viewmodel.picsResponse.observe(viewLifecycleOwner){
-                if (it == null) {
-                    return@observe
-                } else {
-                    searchList = it
+            viewmodel.picsResponse.observe(viewLifecycleOwner) {
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        searchList = it.data!!
+                    }
+                    Status.ERROR -> {
+                        requireContext().showToast(it.status.name)
+                    }
                 }
+
 
             }
         }

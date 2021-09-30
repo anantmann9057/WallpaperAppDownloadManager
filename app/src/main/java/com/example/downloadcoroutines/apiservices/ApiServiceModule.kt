@@ -1,6 +1,5 @@
 package com.example.downloadcoroutines.apiservices
 
-import com.nexogic.apiservices.ApiInterface
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

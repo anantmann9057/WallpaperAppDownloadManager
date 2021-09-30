@@ -64,7 +64,7 @@ class AboutFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        val window: Window = requireActivity().getWindow()
+        val window: Window = requireActivity().window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = resources.getColor(R.color.blue_50)
     }

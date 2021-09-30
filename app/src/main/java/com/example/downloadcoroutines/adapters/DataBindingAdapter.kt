@@ -30,6 +30,7 @@ class DataBindingAdapter {
                 Glide.with(imageView!!.context)
                     .load(imageURL)
                     .centerInside()
+                    .error(R.drawable.ic_house)
                     .apply(RequestOptions().override(600, 800))
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .thumbnail(
@@ -58,7 +59,7 @@ class DataBindingAdapter {
                 .asBitmap()
                 .load(imageURL)
                 .centerInside()
-                .apply(RequestOptions().override(800, 1080))
+                .apply(RequestOptions().override(900, 1080))
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(

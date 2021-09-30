@@ -12,4 +12,7 @@
     <string name="about">About This App</string>
     <string name="disclaimer">This app was just made out for practise and code is purely written in kotlin, if you like my work and want the source code you can get the code from github. If you any Ideas on how can I improve this app Further please feel free to tell me. Thanks</string>
     <string name="contact_me">Contact Me</string>
+    <string name="more_by_the_author">More By the Author:</string>
+    <string name="set_wallpaper">Set Wallpaper</string>
+    <string name="download">Download</string>
 </resources>

@@ -1,8 +1,9 @@
-package com.nexogic.apiservices
+package com.example.downloadcoroutines.apiservices
 
 import com.example.downloadcoroutines.modelClasses.PicsModel
 
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 
@@ -17,6 +18,6 @@ interface ApiInterface {
     suspend fun getPics(
         @Query("page") page: Int,
         @Query("limit") limit: Int
-    ): ArrayList<PicsModel>
+    ): Response<ArrayList<PicsModel>>
 
 }

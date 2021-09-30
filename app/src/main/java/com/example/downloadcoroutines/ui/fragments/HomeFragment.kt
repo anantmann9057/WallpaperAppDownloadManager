@@ -2,6 +2,7 @@ package com.example.downloadcoroutines.ui.fragments
 
 import android.Manifest
 import android.app.DownloadManager
+import android.app.WallpaperManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
@@ -14,6 +15,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -21,15 +23,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.downloadcoroutines.App
-import com.example.downloadcoroutines.utils.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
 import com.example.downloadcoroutines.R
+import com.example.downloadcoroutines.adapters.DataBindingAdapter
 import com.example.downloadcoroutines.adapters.GenericAdapter
+import com.example.downloadcoroutines.base.BaseFragment
 import com.example.downloadcoroutines.modelClasses.PicsModel
+import com.example.downloadcoroutines.utils.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+import com.example.downloadcoroutines.utils.Status
 import com.example.downloadcoroutines.utils.showToast
 import com.example.downloadcoroutines.viewModel.PicsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.example.downloadcoroutines.adapters.DataBindingAdapter
-import com.example.downloadcoroutines.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.bottomsheet_layout.*
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -117,6 +120,12 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
 
             bottomSheetDialog = BottomSheetDialog(requireContext())
             bottomSheetDialog.setContentView(bottomSheetView)
+            bottomSheetDialog.window?.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT
+            )
+            bottomSheetDialog.window?.setGravity(Gravity.BOTTOM)
+            bottomSheetDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
 
         }
@@ -147,8 +156,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
 
 
     private fun setPicsAdapter(page: Int) {
-        showDialog()
-        if (app.isNetworkConnected(requireActivity())) {
+        if (app.isNetworkConnected(requireActivity()) or imageList.isNotEmpty()) {
             viewmodel.getPics(page, 10)
 
         } else {
@@ -160,50 +168,54 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
         if (!viewmodel.picsResponse.hasActiveObservers()) {
             viewmodel.picsResponse.observe(requireActivity(), Observer
             {
-                if (it == null) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        repeat(3) {
-                            viewmodel.getPics(page, 10)
-                        }
+                when (it.status) {
+                    Status.SUCCESS -> {
                         dismissDialog()
-                    }
-                } else {
-                    dismissDialog()
 
-                    initPicsAdapter(it as ArrayList<Any>)
+                        initPicsAdapter(it.data!! as ArrayList<Any>)
 
-                    rvCat.apply {
-                        isNestedScrollingEnabled = false
-                        layoutManager = LinearLayoutManager(
-                            requireContext(),
-                            LinearLayoutManager.HORIZONTAL,
-                            false
-                        )
-                        adapter = GenericAdapter(
-                            it as ArrayList<Any>,
-                            this@HomeFragment,
-                            R.layout.row_categories
-                        )
-                        setItemViewCacheSize(500)
-                    }
-
-                    if (imageList.isEmpty()) {
-                        imageList = it
-                        genericAdapter.notifyAdapter(it as ArrayList<Any>)
-                    } else {
-                        for (i in it) {
-                            imageList.add(
-                                PicsModel(
-                                    i.author,
-                                    i.download_url,
-                                    i.id,
-                                    i.url
-                                )
+                        rvCat.apply {
+                            isNestedScrollingEnabled = false
+                            layoutManager = LinearLayoutManager(
+                                requireContext(),
+                                LinearLayoutManager.HORIZONTAL,
+                                false
                             )
+                            adapter = GenericAdapter(
+                                it.data as ArrayList<Any>,
+                                this@HomeFragment,
+                                R.layout.row_categories
+                            )
+                            setItemViewCacheSize(500)
                         }
-                        genericAdapter.notifyItemInserted(imageList.size)
+
+                        if (imageList.isEmpty()) {
+                            imageList = it.data!!
+                            genericAdapter.notifyAdapter(it.data as ArrayList<Any>)
+                        } else {
+                            for (i in it.data!!) {
+                                imageList.add(
+                                    PicsModel(
+                                        i.author,
+                                        i.download_url,
+                                        i.id,
+                                        i.url
+                                    )
+                                )
+                            }
+                            genericAdapter.notifyItemInserted(imageList.size)
+                        }
+                    }
+                    Status.LOADING -> {
+                        showDialog()
+                    }
+                    Status.ERROR -> {
+                        dismissDialog()
+                        requireActivity().showToast("${it.status.name}")
                     }
                 }
+
+
             })
 
 
@@ -213,7 +225,6 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun downloadFile(url: String, fileName: String? = null) {
-        showDialog()
         val directory = File(Environment.DIRECTORY_DOWNLOADS)
 
         if (!directory.exists()) {
@@ -263,6 +274,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                     DownloadManager.STATUS_PENDING -> {
                     }
                     DownloadManager.STATUS_RUNNING -> {
+                        showDialog()
                     }
                     DownloadManager.STATUS_SUCCESSFUL -> {
                         dismissDialog()
@@ -317,12 +329,19 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
     override fun onItemClick(view: View?, position: Int, `object`: Any) {
         if (`object` is PicsModel) {
             when (view?.id) {
+                //set bottom sheet adapter click listener
+                R.id.cardBS -> {
+                    DataBindingAdapter.let {
+                        it.setSrc(bottomSheetDialog.ivImage, `object`.download_url)
+                    }
+                }
                 R.id.cardIImage -> {
 
                     DataBindingAdapter.let {
                         it.setSrc(bottomSheetDialog.ivImage, `object`.download_url)
                     }
 
+                    //set bottom sheet recyclerview
                     bottomSheetDialog.apply {
 
                         btDownload.setOnClickListener {
@@ -331,7 +350,31 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                                 `object`.author
                             )
                         }
+
                         tvAuthorName.text = `object`.author
+
+                        rvBottomSheet.apply {
+                            layoutManager = LinearLayoutManager(
+                                requireContext(),
+                                LinearLayoutManager.HORIZONTAL,
+                                false
+                            )
+                            adapter = GenericAdapter(
+                                imageList.filter { it.author == `object`.author } as ArrayList<Any>,
+                                this@HomeFragment,
+                                R.layout.row_bottom_sheet
+                            )
+                        }
+
+                        //set wallpaper
+                        ivBackground.setOnClickListener {
+
+                            val wallpaperManager = WallpaperManager.getInstance(requireContext())
+                            wallpaperManager.setBitmap(ivImage.drawable.toBitmap())
+
+                            requireContext().showToast("Wallpaper applied successfully!")
+
+                        }
                         show()
 
                     }
