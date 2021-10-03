@@ -16,7 +16,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,8 +40,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
-
-    var page = 1
 
     @Inject
     lateinit var app: App
@@ -86,27 +83,24 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
 
         imageList = ArrayList()
 
-        if (imageList.isNotEmpty())
-            imageList.clear()
-        setPicsAdapter(page)
+        setPicsAdapter()
 
-
-        nestedHome.setOnScrollChangeListener(nestedScrollListener)
 
         animeHeaderHome.setAnimationFromUrl("https://assets7.lottiefiles.com/packages/lf20_ynwbrgau.json")
     }
 
-    private var nestedScrollListener =
-        NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
-            if (scrollY == v!!.getChildAt(0).measuredHeight - v.measuredHeight) {
-                if (app.isNetworkConnected(requireContext())) {
-                    page++
-                    setPicsAdapter(page)
-                } else {
-                    requireContext().showToast("You are Offline")
-                }
-            }
-        }
+//    private var nestedScrollListener =
+//        NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+//            if (scrollY == v!!.getChildAt(0).measuredHeight - v.measuredHeight) {
+//                if (app.isNetworkConnected(requireContext())) {
+//                    page++
+//                    imageList.clear()
+//                    setPicsAdapter(page)
+//                } else {
+//                    requireContext().showToast("You are Offline")
+//                }
+//            }
+//        }
 
 
     private fun setBottomSheet() {
@@ -138,43 +132,45 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                     R.layout.row_home_pics
                 )
 
-
             rvImages.apply {
                 isNestedScrollingEnabled = false
                 layoutManager = gridLayoutManager
                 adapter = genericAdapter
 
             }
-            rvImages.setItemViewCacheSize(200)
+            rvImages.setItemViewCacheSize(500)
 
+            rvCat.adapter =
+                GenericAdapter(list as ArrayList<Any>, this, R.layout.row_categories)
+            rvCat.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+        } else {
+            genericAdapter.notifyAdapter(list)
         }
     }
 
-    private fun setPicsAdapter(page: Int) {
-        viewmodel.getPics(page, 20)
+    private fun setPicsAdapter() {
         viewmodel.picsResponse.observe(viewLifecycleOwner) {
             when (it) {
+                is NetworkResource.Success -> {
+                    dismissDialog()
+                    imageList = it.data as ArrayList<PicsModel>
+                    initPicsAdapter(imageList as ArrayList<Any>)
+
+
+                }
                 is NetworkResource.Loading -> {
                     showDialog()
                 }
                 is NetworkResource.Error -> {
                     dismissDialog()
-                    it.error?.localizedMessage?.let { it1 -> requireContext().showToast(it1) }
 
-                    imageList.addAll(it.data as ArrayList<PicsModel>)
+                    imageList = it.data as ArrayList<PicsModel>
                     initPicsAdapter(imageList as ArrayList<Any>)
-                    genericAdapter.notifyItemInserted(imageList.size)
-                }
-                is NetworkResource.Success -> {
-                    dismissDialog()
-
-                    imageList.addAll(it.data as ArrayList<PicsModel>)
-                    initPicsAdapter(imageList as ArrayList<Any>)
-                    genericAdapter.notifyItemInserted(imageList.size)
 
                 }
             }
-
 
         }
 
@@ -225,18 +221,14 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                 val fileStatus = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
                 when (fileStatus) {
                     DownloadManager.STATUS_FAILED -> {
-                        dismissDialog()
                     }
                     DownloadManager.STATUS_PAUSED -> {
-                        dismissDialog()
                     }
                     DownloadManager.STATUS_PENDING -> {
                     }
                     DownloadManager.STATUS_RUNNING -> {
-                        showDialog()
                     }
                     DownloadManager.STATUS_SUCCESSFUL -> {
-                        dismissDialog()
                     }
                 }
                 cursor.close()

@@ -31,6 +31,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:cardCornerRadius="@dimen/_10sdp"
+            android:onClick="@{(view)-> itemClickListener.onItemClick(view,index,model)}"
             android:layout_height="wrap_content">
 
             <ImageView
@@ -39,7 +40,7 @@
                 android:layout_height="@dimen/_150sdp"
                 app:blurred="@{model.download_url}"
                 android:scaleType="fitXY"
-                android:onClick="@{(view)-> itemClickListener.onItemClick(view,index,model)}" />
+                 />
         </androidx.cardview.widget.CardView>
 
 

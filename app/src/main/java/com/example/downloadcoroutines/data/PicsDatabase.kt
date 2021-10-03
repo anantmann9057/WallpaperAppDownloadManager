@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.example.downloadcoroutines.data.PicsDAO
 import com.example.downloadcoroutines.modelClasses.PicsModel
 
-@Database(entities = [PicsModel::class], version = 2)
+@Database(entities = [PicsModel::class], version = 1)
 abstract class PicsDatabase : RoomDatabase() {
     abstract fun picsDao(): PicsDAO
 }

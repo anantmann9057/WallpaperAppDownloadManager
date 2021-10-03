@@ -80,7 +80,6 @@ class SearchFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
     }
 
     private fun setSearchAdapter() {
-        viewmodel.getPics(page = 1,100)
         viewmodel.picsResponse.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResource.Success -> {

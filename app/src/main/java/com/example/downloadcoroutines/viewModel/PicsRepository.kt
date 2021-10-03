@@ -27,7 +27,7 @@ class PicsRepository @Inject constructor(
             picsDAO.getPics()
         },
         fetch = {
-            delay(1000)
+            delay(2000)
             apiInterface.getPics(page, limit)
         },
         saveFetchResult = { pics ->

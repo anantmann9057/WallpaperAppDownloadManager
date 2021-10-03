@@ -2,7 +2,6 @@ package com.example.downloadcoroutines.viewModel
 
 import androidx.lifecycle.*
 import com.example.downloadcoroutines.modelClasses.PicsModel
-import com.example.downloadcoroutines.utils.NetworkResource
 import com.example.downloadcoroutines.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
@@ -11,14 +10,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PicsViewModel @Inject constructor(val picsRepository: PicsRepository) : ViewModel() {
-    lateinit var picsResponse: LiveData<NetworkResource<List<PicsModel>>>
+    var picsResponse = picsRepository.getPics(8, 500).asLiveData()
 
     private val _altPicsResponse by lazy { MutableLiveData<Resource<ArrayList<PicsModel>>>() }
     val altPicsResponse: LiveData<Resource<ArrayList<PicsModel>>> get() = _altPicsResponse
 
-    fun getPics(page: Int, limit: Int) {
-        picsResponse = picsRepository.getPics(page, limit).asLiveData()
-    }
 
     fun getAltPics(page: Int, limit: Int) {
         viewModelScope.launch {

@@ -5,11 +5,11 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "pics")
 data class PicsModel(
-    val id: String? = "",
+    @PrimaryKey(autoGenerate = false)
+    val id: String,
 
     val author: String? = null,
 
-    @PrimaryKey(autoGenerate = false)
     val download_url: String,
 
     val url: String? = null,
