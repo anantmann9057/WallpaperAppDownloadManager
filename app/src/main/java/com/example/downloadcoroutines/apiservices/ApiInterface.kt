@@ -15,7 +15,7 @@ interface ApiInterface {
     suspend fun getPics(
         @Query("page") page: Int,
         @Query("limit") limit: Int
-    ): Response<ArrayList<PicsModel>>
+    ): ArrayList<PicsModel>
 
     @GET("/list")
     suspend fun getAltPics(

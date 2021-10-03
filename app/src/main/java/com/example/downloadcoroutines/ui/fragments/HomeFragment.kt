@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -87,6 +86,8 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
 
         imageList = ArrayList()
 
+        if (imageList.isNotEmpty())
+            imageList.clear()
         setPicsAdapter(page)
 
 
@@ -98,8 +99,12 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
     private var nestedScrollListener =
         NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
             if (scrollY == v!!.getChildAt(0).measuredHeight - v.measuredHeight) {
-                page++
-                setPicsAdapter(page)
+                if (app.isNetworkConnected(requireContext())) {
+                    page++
+                    setPicsAdapter(page)
+                } else {
+                    requireContext().showToast("You are Offline")
+                }
             }
         }
 
@@ -140,79 +145,39 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
                 adapter = genericAdapter
 
             }
-            if (imageList.isNotEmpty()) {
-                rvImages.setItemViewCacheSize(imageList.size)
-            }
-
+            rvImages.setItemViewCacheSize(200)
 
         }
     }
 
     private fun setPicsAdapter(page: Int) {
-        if (app.isNetworkConnected(requireActivity()) or imageList.isNotEmpty()) {
-            viewmodel.getPics(page, 10)
-            if (!viewmodel.picsResponse.hasActiveObservers()) {
-                viewmodel.picsResponse.observe(requireActivity(), Observer
-                {
-                    when (it.status) {
-                        Status.SUCCESS -> {
-                            dismissDialog()
+        viewmodel.getPics(page, 20)
+        viewmodel.picsResponse.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResource.Loading -> {
+                    showDialog()
+                }
+                is NetworkResource.Error -> {
+                    dismissDialog()
+                    it.error?.localizedMessage?.let { it1 -> requireContext().showToast(it1) }
 
-                            initPicsAdapter(it.data as ArrayList<Any>)
+                    imageList.addAll(it.data as ArrayList<PicsModel>)
+                    initPicsAdapter(imageList as ArrayList<Any>)
+                    genericAdapter.notifyItemInserted(imageList.size)
+                }
+                is NetworkResource.Success -> {
+                    dismissDialog()
 
-                            rvCat.apply {
-                                isNestedScrollingEnabled = false
-                                layoutManager = LinearLayoutManager(
-                                    requireContext(),
-                                    LinearLayoutManager.HORIZONTAL,
-                                    false
-                                )
-                                adapter = GenericAdapter(
-                                    it.data as ArrayList<Any>,
-                                    this@HomeFragment,
-                                    R.layout.row_categories
-                                )
-                                setItemViewCacheSize(500)
-                            }
+                    imageList.addAll(it.data as ArrayList<PicsModel>)
+                    initPicsAdapter(imageList as ArrayList<Any>)
+                    genericAdapter.notifyItemInserted(imageList.size)
 
-                            if (imageList.isEmpty()) {
-                                imageList = it.data
-                                genericAdapter.notifyAdapter(it.data as ArrayList<Any>)
-                            } else {
-                                for (i in it.data) {
-                                    imageList.add(
-                                        PicsModel(
-                                            i.author,
-                                            i.download_url,
-                                            i.id,
-                                            i.url
-                                        )
-                                    )
-                                }
-                                genericAdapter.notifyItemInserted(imageList.size)
-                            }
-                        }
-                        Status.LOADING -> {
-                            showDialog()
-                        }
-                        Status.ERROR -> {
-                            dismissDialog()
-                            requireActivity().showToast("${it.status.name}")
-                        }
-                    }
-
-
-                })
-
-
+                }
             }
 
-        } else {
-            imageList.add(PicsModel("","","","","",false))
-            requireContext().showToast("Internet not Connected")
-            imgNoConnection.visibility = View.VISIBLE
-            homeContent.visibility = View.GONE
+
         }
+
 
     }
 

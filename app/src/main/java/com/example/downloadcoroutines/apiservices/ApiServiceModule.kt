@@ -1,10 +1,9 @@
 package com.example.downloadcoroutines.apiservices
 
-import android.content.Context
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import android.app.Application
+import androidx.room.Room
+import com.example.downloadcoroutines.App
+import com.example.downloadcoroutines.data.PicsDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,4 +42,10 @@ object ApiServiceModule {
     fun provideApi(): ApiInterface =
         provideRetrofit().create(ApiInterface::class.java)
 
+    @Provides
+    @Singleton
+    fun provideDatabase(app: Application): PicsDatabase =
+        Room.databaseBuilder(app, PicsDatabase::class.java, "pics_database")
+            .fallbackToDestructiveMigration()
+            .build()
 }

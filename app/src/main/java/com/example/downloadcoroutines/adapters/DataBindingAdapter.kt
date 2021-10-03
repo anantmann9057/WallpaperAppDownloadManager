@@ -35,7 +35,6 @@ class DataBindingAdapter {
                     .centerInside()
                     .error(R.drawable.ic_house)
                     .apply(RequestOptions().override(600, 800))
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .thumbnail(
                         Glide.with(imageView.context)
                             .load(R.drawable.progress_animation)

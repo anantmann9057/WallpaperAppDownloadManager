@@ -18,6 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsPictureInPicture="true"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
+        android:preserveLegacyExternalStorage="true"
         android:theme="@style/Theme.DownloadCoRoutines"
         android:usesCleartextTraffic="true">
         <activity android:name=".ui.WebActivity"></activity>

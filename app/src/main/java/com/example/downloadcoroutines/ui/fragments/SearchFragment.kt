@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.downloadcoroutines.R
 import com.example.downloadcoroutines.adapters.GenericAdapter
 import com.example.downloadcoroutines.modelClasses.PicsModel
-import com.example.downloadcoroutines.utils.Status
+import com.example.downloadcoroutines.utils.NetworkResource
 import com.example.downloadcoroutines.utils.showToast
 import com.example.downloadcoroutines.viewModel.PicsViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -80,21 +80,23 @@ class SearchFragment : Fragment(), GenericAdapter.OnItemClickListener<Any> {
     }
 
     private fun setSearchAdapter() {
+        viewmodel.getPics(page = 1,100)
+        viewmodel.picsResponse.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResource.Success -> {
+                    searchList = it.data as ArrayList<PicsModel>
 
-        viewmodel.getPics(1, 500)
-        if (!viewmodel.picsResponse.hasActiveObservers()) {
-            viewmodel.picsResponse.observe(viewLifecycleOwner) {
-                when (it.status) {
-                    Status.SUCCESS -> {
-                        searchList = it.data!!
-                    }
-                    Status.ERROR -> {
-                        requireContext().showToast(it.status.name)
-                    }
                 }
-
-
+                is NetworkResource.Error -> {
+                    requireContext().showToast(
+                        it.error!!.localizedMessage
+                    )
+                }
+                is NetworkResource.Loading -> {
+                }
             }
+
+
         }
 
 
