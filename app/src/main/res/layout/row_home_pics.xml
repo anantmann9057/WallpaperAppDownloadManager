@@ -28,9 +28,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:elevation="@dimen/_5sdp"
+            android:fontFamily="@font/comic"
             android:text="@{model.author}"
             android:textAlignment="center"
-            android:fontFamily="@font/comic"
             android:textColor="@color/white"
             android:textSize="@dimen/_14sdp"
             app:layout_constraintBottom_toBottomOf="@id/cardIImage"
@@ -56,7 +56,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="fitXY" />
+
         </androidx.cardview.widget.CardView>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

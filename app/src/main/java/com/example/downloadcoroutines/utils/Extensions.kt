@@ -2,19 +2,20 @@ package com.example.downloadcoroutines.utils
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.PorterDuff
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.example.downloadcoroutines.R
-import java.io.File
+import com.example.downloadcoroutines.adapters.GenericAdapter
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ui.StyledPlayerView
 
 
 const val MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1
@@ -49,5 +50,14 @@ internal fun ImageView.setUri(uri: Uri) {
         )
         .into(this)
 
+}
+
+internal fun StyledPlayerView.loadUrl(url: String) {
+    var exoPlayer = SimpleExoPlayer.Builder(this.context).build()
+    this.player = exoPlayer
+    exoPlayer.setMediaItem(MediaItem.fromUri(url))
+    exoPlayer.setMediaItem(MediaItem.fromUri(url))
+    exoPlayer.prepare()
+    exoPlayer.play()
 }
 

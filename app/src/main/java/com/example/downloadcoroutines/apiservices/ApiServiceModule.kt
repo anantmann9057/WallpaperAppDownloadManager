@@ -1,5 +1,10 @@
 package com.example.downloadcoroutines.apiservices
 
+import android.content.Context
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,7 +17,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class ApiServiceModule {
+object ApiServiceModule {
     @Provides
     @Singleton
     fun interceptor(): HttpLoggingInterceptor =
@@ -27,7 +32,7 @@ class ApiServiceModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit() = Retrofit.Builder()
+    fun provideRetrofit(): Retrofit = Retrofit.Builder()
         .baseUrl(ApiInterface.BASE_URL)
         .client(okHttp())
         .addConverterFactory(GsonConverterFactory.create())
@@ -35,6 +40,7 @@ class ApiServiceModule {
 
     @Provides
     @Singleton
-    fun provideApi(retrofit: Retrofit): ApiInterface =
+    fun provideApi(): ApiInterface =
         provideRetrofit().create(ApiInterface::class.java)
+
 }

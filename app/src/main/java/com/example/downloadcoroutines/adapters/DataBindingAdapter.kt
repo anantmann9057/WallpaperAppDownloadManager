@@ -15,6 +15,9 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.downloadcoroutines.R
 import com.example.downloadcoroutines.utils.getDominantColor
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import jp.wasabeef.glide.transformations.BlurTransformation
 
 
@@ -44,6 +47,7 @@ class DataBindingAdapter {
 
 
         }
+
 
         @JvmStatic
         @BindingAdapter("app:placeholder")

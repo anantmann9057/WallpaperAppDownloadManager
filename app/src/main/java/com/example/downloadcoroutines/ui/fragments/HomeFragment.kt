@@ -28,9 +28,7 @@ import com.example.downloadcoroutines.adapters.DataBindingAdapter
 import com.example.downloadcoroutines.adapters.GenericAdapter
 import com.example.downloadcoroutines.base.BaseFragment
 import com.example.downloadcoroutines.modelClasses.PicsModel
-import com.example.downloadcoroutines.utils.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
-import com.example.downloadcoroutines.utils.Status
-import com.example.downloadcoroutines.utils.showToast
+import com.example.downloadcoroutines.utils.*
 import com.example.downloadcoroutines.viewModel.PicsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,7 +47,6 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
 
     @Inject
     lateinit var app: App
-
     lateinit var gridLayoutManager: RecyclerView.LayoutManager
 
     val viewmodel: PicsViewModel by viewModels()
@@ -83,7 +80,7 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
     }
 
 
-    fun initViews() {
+    private fun initViews() {
         gridLayoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
 
         setBottomSheet()
@@ -92,16 +89,10 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
 
         setPicsAdapter(page)
 
+
         nestedHome.setOnScrollChangeListener(nestedScrollListener)
 
-        if (imageList.isNullOrEmpty()) {
-            for (i in imageList) {
-                i.placeHolderUrl = "https://assets7.lottiefiles.com/packages/lf20_ynwbrgau.json"
-                i.isVisible = true
-            }
-        }
         animeHeaderHome.setAnimationFromUrl("https://assets7.lottiefiles.com/packages/lf20_ynwbrgau.json")
-
     }
 
     private var nestedScrollListener =
@@ -134,12 +125,15 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
 
     private fun initPicsAdapter(list: ArrayList<Any>) {
         if (!::genericAdapter.isInitialized) {
+            //normal adapter initialization
             genericAdapter =
                 GenericAdapter(
                     list,
                     this,
                     R.layout.row_home_pics
                 )
+
+
             rvImages.apply {
                 isNestedScrollingEnabled = false
                 layoutManager = gridLayoutManager
@@ -154,72 +148,72 @@ class HomeFragment : BaseFragment(), GenericAdapter.OnItemClickListener<Any> {
         }
     }
 
-
     private fun setPicsAdapter(page: Int) {
         if (app.isNetworkConnected(requireActivity()) or imageList.isNotEmpty()) {
             viewmodel.getPics(page, 10)
+            if (!viewmodel.picsResponse.hasActiveObservers()) {
+                viewmodel.picsResponse.observe(requireActivity(), Observer
+                {
+                    when (it.status) {
+                        Status.SUCCESS -> {
+                            dismissDialog()
+
+                            initPicsAdapter(it.data as ArrayList<Any>)
+
+                            rvCat.apply {
+                                isNestedScrollingEnabled = false
+                                layoutManager = LinearLayoutManager(
+                                    requireContext(),
+                                    LinearLayoutManager.HORIZONTAL,
+                                    false
+                                )
+                                adapter = GenericAdapter(
+                                    it.data as ArrayList<Any>,
+                                    this@HomeFragment,
+                                    R.layout.row_categories
+                                )
+                                setItemViewCacheSize(500)
+                            }
+
+                            if (imageList.isEmpty()) {
+                                imageList = it.data
+                                genericAdapter.notifyAdapter(it.data as ArrayList<Any>)
+                            } else {
+                                for (i in it.data) {
+                                    imageList.add(
+                                        PicsModel(
+                                            i.author,
+                                            i.download_url,
+                                            i.id,
+                                            i.url
+                                        )
+                                    )
+                                }
+                                genericAdapter.notifyItemInserted(imageList.size)
+                            }
+                        }
+                        Status.LOADING -> {
+                            showDialog()
+                        }
+                        Status.ERROR -> {
+                            dismissDialog()
+                            requireActivity().showToast("${it.status.name}")
+                        }
+                    }
+
+
+                })
+
+
+            }
 
         } else {
-            app.appContext!!.showToast("Internet not Connected")
+            imageList.add(PicsModel("","","","","",false))
+            requireContext().showToast("Internet not Connected")
             imgNoConnection.visibility = View.VISIBLE
             homeContent.visibility = View.GONE
         }
 
-        if (!viewmodel.picsResponse.hasActiveObservers()) {
-            viewmodel.picsResponse.observe(requireActivity(), Observer
-            {
-                when (it.status) {
-                    Status.SUCCESS -> {
-                        dismissDialog()
-
-                        initPicsAdapter(it.data!! as ArrayList<Any>)
-
-                        rvCat.apply {
-                            isNestedScrollingEnabled = false
-                            layoutManager = LinearLayoutManager(
-                                requireContext(),
-                                LinearLayoutManager.HORIZONTAL,
-                                false
-                            )
-                            adapter = GenericAdapter(
-                                it.data as ArrayList<Any>,
-                                this@HomeFragment,
-                                R.layout.row_categories
-                            )
-                            setItemViewCacheSize(500)
-                        }
-
-                        if (imageList.isEmpty()) {
-                            imageList = it.data!!
-                            genericAdapter.notifyAdapter(it.data as ArrayList<Any>)
-                        } else {
-                            for (i in it.data!!) {
-                                imageList.add(
-                                    PicsModel(
-                                        i.author,
-                                        i.download_url,
-                                        i.id,
-                                        i.url
-                                    )
-                                )
-                            }
-                            genericAdapter.notifyItemInserted(imageList.size)
-                        }
-                    }
-                    Status.LOADING -> {
-                        showDialog()
-                    }
-                    Status.ERROR -> {
-                        dismissDialog()
-                        requireActivity().showToast("${it.status.name}")
-                    }
-                }
-
-
-            })
-
-
-        }
     }
 
 

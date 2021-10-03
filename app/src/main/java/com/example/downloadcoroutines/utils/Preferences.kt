@@ -3,6 +3,9 @@ package com.example.downloadcoroutines.utils
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.downloadcoroutines.modelClasses.User
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -59,7 +62,7 @@ class Preferences @Inject constructor(@ApplicationContext context: Context) {
         return appSharedPrefs.getString(url, "")
     }
 
-    /*fun setUserDetail(user: User?) {
+    fun setUserDetail(user: User?) {
         val gson = Gson()
         val type = object : TypeToken<User?>() {}.type
         val json = gson.toJson(user, type)
@@ -71,7 +74,7 @@ class Preferences @Inject constructor(@ApplicationContext context: Context) {
         val gson = Gson()
         val type = object : TypeToken<User?>() {}.type
         return gson.fromJson(model, type)
-    }*/
+    }
 
     fun setTime(range: String?) {
         prefsEditor.putString(timePref, range).commit()

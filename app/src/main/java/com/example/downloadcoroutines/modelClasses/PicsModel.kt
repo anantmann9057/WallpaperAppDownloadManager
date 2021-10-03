@@ -11,6 +11,10 @@ data class PicsModel(
 
     var placeHolderUrl: String? = null,
 
-    var isVisible: Boolean? = false
-) {
+    var isVisible: Boolean? = false,
+
+    var author_url: String? = "",
+
+    var post_url: String? = "",
+    ) {
 }
